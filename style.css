@@ -1,0 +1,293 @@
+/* style.css — ночная тематика с неоновым свечением и звёздами */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+  background: radial-gradient(ellipse at bottom, #0d1120 0%, #03050b 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ---- Звёздное небо (анимация) ---- */
+.stars, .twinkling {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.stars {
+  background: transparent url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="300"%3E%3Ccircle cx="30" cy="30" r="1.5" fill="%23ffffff" opacity="0.8"/%3E%3Ccircle cx="90" cy="70" r="1" fill="%23ffffff" opacity="0.6"/%3E%3Ccircle cx="150" cy="120" r="2" fill="%23ffffff" opacity="0.9"/%3E%3Ccircle cx="220" cy="50" r="1.2" fill="%23ffffff" opacity="0.7"/%3E%3Ccircle cx="270" cy="180" r="1.8" fill="%23ffffff" opacity="0.5"/%3E%3Ccircle cx="50" cy="200" r="1.3" fill="%23ffffff" opacity="0.8"/%3E%3Ccircle cx="180" cy="250" r="1" fill="%23ffffff" opacity="0.6"/%3E%3Ccircle cx="280" cy="260" r="1.7" fill="%23ffffff" opacity="0.7"/%3E%3Ccircle cx="120" cy="280" r="1.2" fill="%23ffffff" opacity="0.9"/%3E%3Ccircle cx="10" cy="150" r="1.5" fill="%23ffffff" opacity="0.6"/%3E%3C/svg%3E') repeat;
+  background-size: 300px 300px;
+  animation: starMove 60s linear infinite;
+}
+
+.twinkling {
+  background: transparent url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Ccircle cx="40" cy="40" r="2" fill="%23ffffff" opacity="0.3"/%3E%3Ccircle cx="120" cy="80" r="2.5" fill="%23ffffff" opacity="0.2"/%3E%3Ccircle cx="180" cy="30" r="1.8" fill="%23ffffff" opacity="0.4"/%3E%3Ccircle cx="80" cy="160" r="2.2" fill="%23ffffff" opacity="0.25"/%3E%3Ccircle cx="160" cy="180" r="1.5" fill="%23ffffff" opacity="0.35"/%3E%3C/svg%3E') repeat;
+  background-size: 200px 200px;
+  animation: twinkle 8s ease-in-out infinite alternate;
+}
+
+@keyframes starMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 300px 300px; }
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.2; }
+  100% { opacity: 0.8; }
+}
+
+/* ---- Основной контейнер (стекло + неон) ---- */
+.container {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  width: 100%;
+  background: rgba(10, 14, 30, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 3.5rem;
+  padding: 3rem 2.5rem;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(120, 140, 255, 0.08),
+    inset 0 0 80px rgba(60, 80, 200, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  text-align: center;
+  transition: box-shadow 0.4s;
+}
+
+.container:hover {
+  box-shadow: 
+    0 30px 70px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(160, 180, 255, 0.15),
+    0 0 40px rgba(80, 100, 255, 0.08);
+}
+
+/* Декоративное неоновое кольцо */
+.glow-ring {
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 120%;
+  height: 140%;
+  background: radial-gradient(circle at 50% 50%, rgba(80, 120, 255, 0.04), transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(40px);
+  z-index: -1;
+}
+
+h1 {
+  font-size: 2.9rem;
+  font-weight: 600;
+  color: #ecefff;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.2rem;
+  text-shadow: 0 0 20px rgba(100, 140, 255, 0.3);
+}
+
+.subtitle {
+  color: #a0b8e8;
+  font-size: 1.1rem;
+  font-weight: 300;
+  margin-bottom: 2.8rem;
+  opacity: 0.8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding-bottom: 0.6rem;
+  text-shadow: 0 0 12px rgba(80, 120, 255, 0.2);
+}
+
+/* ---- Сетка ссылок ---- */
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1.8rem;
+  justify-content: center;
+  margin-bottom: 2.2rem;
+}
+
+.link-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 2.4rem;
+  padding: 1.6rem 0.5rem;
+  text-decoration: none;
+  color: #d0ddff;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.link-card i {
+  font-size: 2.8rem;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 0 6px rgba(100, 150, 255, 0.1));
+}
+
+.link-card span {
+  font-size: 1.1rem;
+  letter-spacing: 0.3px;
+  transition: color 0.3s;
+}
+
+/* Неоновый эффект при наведении (общий) */
+.link-card .glow-effect {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.link-card:hover .glow-effect {
+  opacity: 1;
+}
+
+/* ---- Индивидуальные цвета (ночная неоновая палитра) ---- */
+
+/* VK — синий */
+.link-card.vk i {
+  color: #6b8fc9;
+}
+.link-card.vk:hover {
+  background: rgba(76, 117, 163, 0.25);
+  border-color: #6b8fc9;
+  box-shadow: 0 0 30px rgba(76, 117, 163, 0.3), inset 0 0 30px rgba(76, 117, 163, 0.05);
+  transform: translateY(-6px) scale(1.02);
+}
+.link-card.vk:hover i {
+  color: #aac3ff;
+  filter: drop-shadow(0 0 16px #4c75a3);
+}
+
+/* Shikimori — золотисто-оранжевый */
+.link-card.shikimori i {
+  color: #f5b84a;
+}
+.link-card.shikimori:hover {
+  background: rgba(245, 166, 35, 0.2);
+  border-color: #f5b84a;
+  box-shadow: 0 0 30px rgba(245, 166, 35, 0.25), inset 0 0 30px rgba(245, 166, 35, 0.04);
+  transform: translateY(-6px) scale(1.02);
+}
+.link-card.shikimori:hover i {
+  color: #ffda7a;
+  filter: drop-shadow(0 0 16px #f5a623);
+}
+
+/* Discord — фиолетово-синий */
+.link-card.discord i {
+  color: #7b89f0;
+}
+.link-card.discord:hover {
+  background: rgba(88, 101, 242, 0.2);
+  border-color: #7b89f0;
+  box-shadow: 0 0 30px rgba(88, 101, 242, 0.3), inset 0 0 30px rgba(88, 101, 242, 0.05);
+  transform: translateY(-6px) scale(1.02);
+}
+.link-card.discord:hover i {
+  color: #b3c0ff;
+  filter: drop-shadow(0 0 18px #5865f2);
+}
+
+/* Anixart — розово-малиновый */
+.link-card.anixart i {
+  color: #ff7aaa;
+}
+.link-card.anixart:hover {
+  background: rgba(255, 107, 157, 0.2);
+  border-color: #ff7aaa;
+  box-shadow: 0 0 30px rgba(255, 107, 157, 0.25), inset 0 0 30px rgba(255, 107, 157, 0.04);
+  transform: translateY(-6px) scale(1.02);
+}
+.link-card.anixart:hover i {
+  color: #ffb3d0;
+  filter: drop-shadow(0 0 18px #ff6b9d);
+}
+
+/* hover — общий белый текст */
+.link-card:hover {
+  color: #ffffff;
+}
+.link-card:hover span {
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+/* footer */
+footer {
+  margin-top: 0.8rem;
+  color: #5a6f99;
+  font-size: 0.9rem;
+  opacity: 0.6;
+  letter-spacing: 0.5px;
+  border-top: 1px solid rgba(255, 255, 255, 0.02);
+  padding-top: 1rem;
+}
+
+/* ---- Адаптивность ---- */
+@media (max-width: 550px) {
+  .container {
+    padding: 2rem 1.5rem;
+    border-radius: 2.5rem;
+  }
+  h1 {
+    font-size: 2.2rem;
+  }
+  .links-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+  }
+  .link-card {
+    padding: 1.2rem 0.2rem;
+    border-radius: 2rem;
+  }
+  .link-card i {
+    font-size: 2.3rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .links-grid {
+    gap: 0.9rem;
+  }
+  .link-card {
+    padding: 1rem 0.1rem;
+    border-radius: 1.6rem;
+  }
+  .link-card i {
+    font-size: 1.8rem;
+  }
+  .link-card span {
+    font-size: 0.9rem;
+  }
+}
