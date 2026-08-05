@@ -18,7 +18,7 @@
     <!-- Аватар и ник -->
     <div class="profile-header">
       <div class="avatar-wrapper">
-        <img src="https://shikimori.io/system/users/x160/1361053.png" alt="Miless" class="avatar" />
+        <img src="https://via.placeholder.com/120/1a1f2e/6b8fc9?text=M" alt="Miless" class="avatar" />
         <div class="avatar-ring"></div>
       </div>
       <h1>Miless</h1>
@@ -34,31 +34,7 @@
       </div>
     </div>
 
-    <!-- ⭐ БЛОК: Discord статус -->
-    <div class="discord-status" id="discordStatus">
-      <div class="discord-header">
-        <i class="fab fa-discord"></i>
-        <span>Discord</span>
-      </div>
-      <div class="discord-content">
-        <div class="discord-avatar" id="discordAvatar">
-          <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Discord" id="discordAvatarImg" />
-          <div class="discord-online" id="discordOnlineDot"></div>
-        </div>
-        <div class="discord-info">
-          <div class="discord-username" id="discordUsername">Загрузка...</div>
-          <div class="discord-activity" id="discordActivity">
-            <span class="activity-icon">🟢</span>
-            <span class="activity-text">Подключение...</span>
-          </div>
-        </div>
-      </div>
-      <div class="discord-extra" id="discordExtra" style="display: none;">
-        <!-- Тут будет показываться игра или Spotify -->
-      </div>
-    </div>
-
-    <!-- ⭐ БЛОК: Счётчик "Дней на Shikimori" -->
+    <!-- Счётчик "Дней на Shikimori" -->
     <div class="shikimori-days" id="shikimoriDays">
       <div class="days-number" id="daysCount">
         <i class="fas fa-calendar-alt" style="font-size: 2rem; color: #6b8fc9; margin-right: 0.5rem;"></i>
@@ -111,7 +87,6 @@
         <span>📅 В планах: <strong id="plannedAnime">0</strong></span>
       </div>
       <div id="animeGrid" class="anime-grid">
-        <!-- Тут будут карточки аниме -->
         <div class="loading-anime">Загрузка...</div>
       </div>
     </div>
@@ -132,28 +107,7 @@
   <!-- Подключаем QR-библиотеку -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   
-  <!-- Отладка для телефона (показывает ошибки на экране) -->
-  <div id="debugConsole" style="
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
-    background: rgba(0,0,0,0.95);
-    color: #0f0;
-    font-size: 11px;
-    padding: 10px;
-    border-radius: 10px;
-    max-height: 150px;
-    overflow-y: auto;
-    z-index: 99999;
-    font-family: monospace;
-    display: none;
-    border: 2px solid #0f0;
-    line-height: 1.4;
-    pointer-events: none;
-  "></div>
-
   <!-- Подключаем скрипты -->
   <script src="script.js"></script>
 </body>
-  </html>
+</html>
