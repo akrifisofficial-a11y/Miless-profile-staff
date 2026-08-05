@@ -6,7 +6,7 @@
 
   // --- КОНФИГУРАЦИЯ DISCORD ---
   const DISCORD_CONFIG = {
-    userId: '123456789012345678', // ВСТАВЬТЕ СВОЙ DISCORD ID (18 цифр)
+    userId: '1438577441231863842', // ВСТАВЬТЕ СВОЙ DISCORD ID (18 цифр)
     apiUrl: 'https://api.lanyard.rest/v1/users/',
     wsUrl: 'wss://api.lanyard.rest/socket',
     updateInterval: 30000, // Интервал обновления (мс)
