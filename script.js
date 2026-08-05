@@ -9,7 +9,7 @@
     shikimoriUsername: 'Miless', // ← ЗАМЕНИ НА СВОЙ НИК!
     // 👆👆👆 ЗДЕСЬ ЗАМЕНИ НА СВОЙ НИК 👆👆👆
     
-    shikimoriApiUrl: 'https://shikimori.one/api/users',
+    shikimoriApiUrl: 'https://shikimori.io/api/users',
     // Прокси для обхода CORS
     proxyUrl: 'https://api.allorigins.win/raw?url=',
     perPage: 50, // Количество аниме за один запрос
