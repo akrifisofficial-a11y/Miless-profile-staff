@@ -494,3 +494,73 @@ footer {
   transition: width 0.5s ease;
   width: 0%;
 }
+/* --- Счётчик "Дней на Shikimori" --- */
+.shikimori-days {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 2rem;
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(4px);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.shikimori-days:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(107, 143, 201, 0.15);
+  transform: translateY(-2px);
+}
+
+.days-number {
+  font-size: 3.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #6b8fc9, #f5a623);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  text-shadow: 0 0 40px rgba(107, 143, 201, 0.1);
+}
+
+.days-label {
+  color: #a4b3d1;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  margin-top: 0.1rem;
+}
+
+.days-sub {
+  color: #6c7b9c;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  opacity: 0.6;
+}
+
+/* Анимация появления */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.shikimori-days .days-number {
+  animation: countUp 0.8s ease-out;
+}
+
+/* Адаптация под телефон */
+@media (max-width: 500px) {
+  .days-number {
+    font-size: 2.8rem;
+  }
+  .shikimori-days {
+    padding: 1rem;
+    margin: 1rem 0 1.5rem;
+  }
+}
