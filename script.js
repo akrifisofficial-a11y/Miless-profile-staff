@@ -78,7 +78,7 @@
     }
 
     // Проверяем Discord ID
-    if (DISCORD_CONFIG.userId === '123456789012345678') {
+    if (DISCORD_CONFIG.userId === '1438577441231863842') {
       console.warn('⚠️ ВНИМАНИЕ: Используется Discord ID по умолчанию');
       console.warn('💡 Замени его на свой в файле script.js, строка 17');
     }
@@ -430,7 +430,7 @@
 
     // 📅 УСТАНОВИ СВОЮ ДАТУ РЕГИСТРАЦИИ НА SHIKIMORI
     // Формат: new Date(ГОД, МЕСЯЦ-1, ДЕНЬ)
-    const registrationDate = new Date(2023, 6, 15); // ← ЗАМЕНИ НА СВОЮ ДАТУ!
+    const registrationDate = new Date(2023, 8, 14); // ← ЗАМЕНИ НА СВОЮ ДАТУ!
     // Примеры:
     // const registrationDate = new Date(2022, 0, 1);  // 1 января 2022
     // const registrationDate = new Date(2024, 8, 20); // 20 сентября 2024
