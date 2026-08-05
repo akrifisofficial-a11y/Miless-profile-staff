@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
+  <!-- Звёздный фон -->
   <div class="stars" aria-hidden="true"></div>
   <div class="twinkling" aria-hidden="true"></div>
 
@@ -17,7 +18,7 @@
     <!-- Аватар и ник -->
     <div class="profile-header">
       <div class="avatar-wrapper">
-        <img src="https://shikimori.io/system/users/x160/1361053.png" alt="Miless" class="avatar" />
+        <img src="https://via.placeholder.com/120/1a1f2e/6b8fc9?text=M" alt="Miless" class="avatar" />
         <div class="avatar-ring"></div>
       </div>
       <h1>Miless</h1>
@@ -33,7 +34,17 @@
       </div>
     </div>
 
-    <!-- Ссылки -->
+    <!-- ⭐ НОВЫЙ БЛОК: Счётчик "Дней на Shikimori" -->
+    <div class="shikimori-days" id="shikimoriDays">
+      <div class="days-number" id="daysCount">
+        <i class="fas fa-calendar-alt" style="font-size: 2rem; color: #6b8fc9; margin-right: 0.5rem;"></i>
+        <span id="daysValue">--</span>
+      </div>
+      <div class="days-label">дней на Shikimori</div>
+      <div class="days-sub">с 2023 года</div>
+    </div>
+
+    <!-- Ссылки на соцсети -->
     <div class="links-grid">
       <a href="https://vk.ru/akrifisofficial" target="_blank" class="link-card vk">
         <i class="fab fa-vk"></i>
@@ -96,6 +107,29 @@
 
   <!-- Подключаем QR-библиотеку -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  
+  <!-- Отладка для телефона (показывает ошибки на экране) -->
+  <div id="debugConsole" style="
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.95);
+    color: #0f0;
+    font-size: 11px;
+    padding: 10px;
+    border-radius: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 99999;
+    font-family: monospace;
+    display: none;
+    border: 2px solid #0f0;
+    line-height: 1.4;
+    pointer-events: none;
+  "></div>
+
+  <!-- Подключаем скрипты -->
   <script src="script.js"></script>
 </body>
-  </html>
+</html>
