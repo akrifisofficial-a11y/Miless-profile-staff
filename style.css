@@ -564,3 +564,183 @@ footer {
     margin: 1rem 0 1.5rem;
   }
 }
+/* --- Блок Discord статуса --- */
+.discord-status {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 2rem;
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+}
+
+.discord-status:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(88, 101, 242, 0.2);
+  transform: translateY(-2px);
+}
+
+.discord-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #5865f2;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.discord-header i {
+  font-size: 1.2rem;
+}
+
+.discord-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.discord-avatar {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.discord-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+}
+
+.discord-online {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #1a1f2e;
+  background: #4ade80;
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+  transition: all 0.3s ease;
+}
+
+.discord-online.idle {
+  background: #fbbf24;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.discord-online.dnd {
+  background: #f87171;
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);
+}
+
+.discord-online.offline {
+  background: #6b7280;
+  box-shadow: none;
+}
+
+.discord-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.discord-username {
+  color: #ecefff;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.discord-activity {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #a4b3d1;
+  font-size: 0.85rem;
+}
+
+.activity-icon {
+  font-size: 0.7rem;
+}
+
+.activity-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.discord-extra {
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: #d0ddff;
+  font-size: 0.9rem;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.discord-extra i {
+  font-size: 1.4rem;
+  color: #5865f2;
+}
+
+.discord-extra .game-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.discord-extra .game-name {
+  font-weight: 500;
+}
+
+.discord-extra .game-details {
+  color: #8a9bb8;
+  font-size: 0.8rem;
+}
+
+/* Анимация появления */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Адаптация под телефон */
+@media (max-width: 500px) {
+  .discord-status {
+    padding: 1rem;
+  }
+  .discord-content {
+    gap: 0.8rem;
+  }
+  .discord-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  .discord-username {
+    font-size: 0.9rem;
+  }
+  .discord-activity {
+    font-size: 0.75rem;
+  }
+  .discord-extra {
+    font-size: 0.8rem;
+    flex-wrap: wrap;
+  }
+  }
