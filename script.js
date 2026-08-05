@@ -13,7 +13,7 @@
     jsonDataUrl: 'anime.json',
     
     // Домены для API (можно использовать .io, .one, .me, .org)
-    shikimoriApiUrl: 'https://shikimori.io/api/users',
+    shikimoriApiUrl: 'https://shikimori.one/api/users',
     
     // Прокси для обхода CORS
     proxyUrl: 'https://api.allorigins.win/raw?url=',
@@ -71,6 +71,8 @@
     DOM.showQRBtn = document.getElementById('showQRBtn');
     DOM.closeQRBtn = document.getElementById('closeQRBtn');
 
+    console.log('✅ DOM элементы получены');
+
     // Проверяем ник
     if (CONFIG.shikimoriUsername === 'Miless') {
       console.warn('⚠️ ВНИМАНИЕ: Используется ник по умолчанию "Miless"');
@@ -84,12 +86,19 @@
     }
 
     // Запускаем системы
+    console.log('🔄 Запуск систем...');
     initStatus();
     initClock();
     initButtons();
     initQRCode();
-    calculateShikimoriDays(); // Счётчик дней
-    initDiscord(); // Discord интеграция
+    
+    // Запускаем счётчик дней
+    console.log('🔄 Запуск счётчика дней...');
+    calculateShikimoriDays();
+    
+    // Запускаем Discord интеграцию
+    console.log('🔄 Запуск Discord интеграции...');
+    initDiscord();
 
     console.log('✅ Сайт инициализирован');
     console.log(`📌 Ник на Shikimori: ${CONFIG.shikimoriUsername}`);
@@ -98,7 +107,10 @@
 
   // --- СТАТУС ---
   function initStatus() {
-    if (!DOM.statusIndicator) return;
+    if (!DOM.statusIndicator) {
+      console.warn('⚠️ Статус-бар не найден');
+      return;
+    }
     updateStatus(state.currentStatus);
     
     const demoStatuses = [
@@ -423,32 +435,43 @@
     }
   }
 
-  // --- ⭐ СЧЁТЧИК "ДНЕЙ НА SHIKIMORI" ---
+  // --- ⭐ СЧЁТЧИК "ДНЕЙ НА SHIKIMORI" (ИСПРАВЛЕН) ---
   function calculateShikimoriDays() {
+    console.log('🔍 calculateShikimoriDays() вызвана');
+    
     const daysValue = document.getElementById('daysValue');
-    if (!daysValue) return;
+    console.log('🔍 daysValue элемент:', daysValue);
+    
+    if (!daysValue) {
+      console.warn('⚠️ Элемент #daysValue не найден в DOM');
+      return;
+    }
 
     // 📅 УСТАНОВИ СВОЮ ДАТУ РЕГИСТРАЦИИ НА SHIKIMORI
     // Формат: new Date(ГОД, МЕСЯЦ-1, ДЕНЬ)
     const registrationDate = new Date(2023, 8, 14); // ← ЗАМЕНИ НА СВОЮ ДАТУ!
-    // Примеры:
-    // const registrationDate = new Date(2022, 0, 1);  // 1 января 2022
-    // const registrationDate = new Date(2024, 8, 20); // 20 сентября 2024
+    console.log('🔍 Дата регистрации:', registrationDate);
 
     const now = new Date();
+    console.log('🔍 Текущая дата:', now);
+    
     const diffTime = now - registrationDate;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    console.log('🔍 Разница в днях:', diffDays);
 
     if (diffDays > 0) {
       daysValue.textContent = diffDays;
+      console.log(`✅ Счётчик обновлён: ${diffDays} дней`);
     } else {
       daysValue.textContent = '0';
+      console.log('✅ Счётчик обновлён: 0 дней');
     }
   }
 
-  // --- ⭐ DISCORD ИНТЕГРАЦИЯ ---
+  // --- ⭐ DISCORD ИНТЕГРАЦИЯ (ИСПРАВЛЕНА) ---
   async function fetchDiscordStatus() {
     try {
+      console.log('🔄 Запрос к Discord API...');
       const response = await fetch(`${DISCORD_CONFIG.apiUrl}${DISCORD_CONFIG.userId}`);
       
       if (!response.ok) {
@@ -461,6 +484,7 @@
         throw new Error('API вернул ошибку');
       }
       
+      console.log('✅ Discord API ответ получен');
       return data.data;
     } catch (error) {
       console.error('❌ Ошибка Discord API:', error.message);
@@ -469,13 +493,21 @@
   }
 
   function updateDiscordUI(status) {
+    console.log('🔄 updateDiscordUI() вызвана, статус:', status ? 'есть' : 'нет');
+    
     const usernameEl = document.getElementById('discordUsername');
     const activityEl = document.getElementById('discordActivity');
     const onlineDot = document.getElementById('discordOnlineDot');
     const extraEl = document.getElementById('discordExtra');
     const avatarImg = document.getElementById('discordAvatarImg');
 
-    if (!usernameEl) return;
+    console.log('🔍 discordUsername:', usernameEl);
+    console.log('🔍 discordActivity:', activityEl);
+
+    if (!usernameEl || !activityEl) {
+      console.warn('⚠️ Discord элементы не найдены в DOM');
+      return;
+    }
 
     if (!status) {
       usernameEl.textContent = 'Discord не отвечает';
@@ -512,16 +544,14 @@
     if (status.activities && status.activities.length > 0) {
       const game = status.activities[0];
       
-      if (game.name && game.type !== 4) { // Не считаем кастомный статус
+      if (game.name && game.type !== 4) {
         activityText = game.name;
         activityIcon = '🎮';
         
-        // Детали игры
         let details = '';
         if (game.details) details = game.details;
         if (game.state) details += ` (${game.state})`;
         
-        // Иконка игры (если есть)
         let gameIcon = '';
         if (game.assets && game.assets.large_image) {
           gameIcon = `https://cdn.discordapp.com/app-assets/${game.application_id}/${game.assets.large_image}.png`;
@@ -570,18 +600,68 @@
       const avatarUrl = `https://cdn.discordapp.com/avatars/${status.discord_user.id}/${status.discord_user.avatar}.png?size=64`;
       avatarImg.src = avatarUrl;
       avatarImg.onerror = () => {
-        avatarImg.src = '';
+        avatarImg.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
       };
     }
+    
+    console.log('✅ Discord UI обновлена');
   }
 
   async function refreshDiscordStatus() {
+    console.log('🔄 refreshDiscordStatus() вызвана');
+    if (DISCORD_CONFIG.userId === '123456789012345678') {
+      console.warn('⚠️ Discord ID не настроен');
+      const usernameEl = document.getElementById('discordUsername');
+      if (usernameEl) {
+        usernameEl.textContent = '⚠️ Вставь ID';
+      }
+      return;
+    }
+    
     const status = await fetchDiscordStatus();
     updateDiscordUI(status);
   }
 
   // Запускаем Discord интеграцию
   function initDiscord() {
-    if (DISCORD_CONFIG.userId === '1438577441231863842') {
+    console.log('🔄 initDiscord() вызвана');
+    if (DISCORD_CONFIG.userId === '123456789012345678') {
       console.warn('⚠️ Вставь свой Discord ID в DISCORD_CONFIG.userId');
-      const usernameEl = document.getElementById('discordUsername
+      const usernameEl = document.getElementById('discordUsername');
+      if (usernameEl) {
+        usernameEl.textContent = '⚠️ Вставь ID';
+      }
+      return;
+    }
+
+    // Первое обновление через 1 секунду (ждём загрузку DOM)
+    setTimeout(() => {
+      refreshDiscordStatus();
+    }, 1000);
+    
+    // Регулярные обновления
+    setInterval(refreshDiscordStatus, DISCORD_CONFIG.updateInterval);
+  }
+
+  // --- ЗАПУСК ---
+  if (document.readyState === 'loading') {
+    console.log('⏳ DOM загружается, ждём...');
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    console.log('✅ DOM уже загружен');
+    init();
+  }
+
+  // Экспорт для ручного вызова
+  window.refreshAnime = fetchAllAnime;
+  window.showAnime = toggleAnimeList;
+  window.calculateDays = calculateShikimoriDays;
+  window.refreshDiscord = refreshDiscordStatus;
+
+  console.log('🚀 script.js загружен!');
+  console.log('📌 Команды:');
+  console.log('  - window.calculateDays() — обновить счётчик дней');
+  console.log('  - window.refreshDiscord() — обновить Discord статус');
+  console.log('  - window.refreshAnime() — обновить аниме-лист');
+
+})();
