@@ -1,18 +1,23 @@
-// script.js — Полная загрузка всех аниме (с пагинацией)
+// script.js — Полное управление статусом, аниме-листом и счётчиком дней
 
 (function() {
   'use strict';
 
   // --- КОНФИГУРАЦИЯ ---
   const CONFIG = {
-    // 👇👇👇 ЗДЕСЬ ЗАМЕНИ НА СВОЙ НИК 👇👇👇
-    shikimoriUsername: 'Miless', // ← ЗАМЕНИ НА СВОЙ НИК!
-    // 👆👆👆 ЗДЕСЬ ЗАМЕНИ НА СВОЙ НИК 👆👆👆
+    // 👇👇👇 ЗДЕСЬ ТВОЙ НИК (как в ссылке) 👇👇👇
+    shikimoriUsername: 'Miless', // ← Убедись, что ник правильный!
+    // 👆👆👆 ЗДЕСЬ ТВОЙ НИК 👆👆👆
     
+    // ⚡ ДЛЯ JSON-ФАЙЛА (если используешь)
+    jsonDataUrl: 'anime.json',
+    
+    // Домены для API (можно использовать .io, .one, .me, .org)
     shikimoriApiUrl: 'https://shikimori.io/api/users',
+    
     // Прокси для обхода CORS
     proxyUrl: 'https://api.allorigins.win/raw?url=',
-    perPage: 50, // Количество аниме за один запрос
+    perPage: 50,
     updateInterval: 30000,
     clockUpdateInterval: 1000,
     statusCycleInterval: 15000
@@ -24,9 +29,6 @@
     isAnimeVisible: false,
     isQRVisible: false,
     isLoading: false,
-    totalPages: 0,
-    currentPage: 0,
-    isAllLoaded: false,
     currentStatus: {
       text: 'В сети',
       activity: '🎮 Играю в Cyberpunk 2077',
@@ -70,13 +72,13 @@
     initClock();
     initButtons();
     initQRCode();
+    calculateShikimoriDays(); // ⭐ НОВЫЙ СЧЁТЧИК
 
     console.log('✅ Сайт инициализирован');
     console.log(`📌 Ник на Shikimori: ${CONFIG.shikimoriUsername}`);
-    console.log('📌 Загрузка всех аниме без ограничений');
   }
 
-  // --- СТАТУС (без изменений) ---
+  // --- СТАТУС ---
   function initStatus() {
     if (!DOM.statusIndicator) return;
     updateStatus(state.currentStatus);
@@ -190,61 +192,46 @@
     }
   }
 
-  // --- АНИМЕ-ЛИСТ (ПОЛНАЯ ЗАГРУЗКА С ПАГИНАЦИЕЙ) ---
+  // --- АНИМЕ-ЛИСТ (Shikimori API с пагинацией) ---
   async function fetchAllAnime() {
     if (!DOM.animeGrid) return;
     
-    // Сбрасываем состояние
     state.animeList = [];
-    state.currentPage = 0;
-    state.isAllLoaded = false;
-    state.totalPages = 0;
-    
     DOM.animeGrid.innerHTML = '<div class="loading-anime">⏳ Загрузка всех аниме...</div>';
 
     try {
       const username = CONFIG.shikimoriUsername.trim();
       
       if (!username || username === 'Miless') {
-        throw new Error('❌ Укажи свой ник на Shikimori в настройках (строка 8)');
+        throw new Error('❌ Укажи свой ник на Shikimori в настройках');
       }
 
-      // Сначала получаем общее количество
+      // Загружаем первую страницу
       const firstPage = await fetchAnimePage(username, 1);
       
       if (!firstPage || firstPage.length === 0) {
         throw new Error('📭 Аниме не найдены. Проверь ник или добавь аниме в список');
       }
 
-      // Получаем общее количество страниц из заголовков
-      // Shikimori возвращает пагинацию в заголовках, но через прокси мы её не видим
-      // Поэтому загружаем все страницы в цикле
-      
       state.animeList = [...firstPage];
       let page = 2;
       let hasMore = true;
       let totalLoaded = firstPage.length;
       
-      // Показываем прогресс
       DOM.animeGrid.innerHTML = `<div class="loading-anime">⏳ Загрузка... (${totalLoaded} аниме)</div>`;
 
-      // Загружаем остальные страницы
-      while (hasMore && page <= 50) { // Максимум 50 страниц (2500 аниме)
+      while (hasMore && page <= 50) {
         try {
           const nextPage = await fetchAnimePage(username, page);
           
           if (nextPage && nextPage.length > 0) {
             state.animeList = state.animeList.concat(nextPage);
             totalLoaded += nextPage.length;
-            
-            // Обновляем прогресс
             DOM.animeGrid.innerHTML = `<div class="loading-anime">⏳ Загрузка... (${totalLoaded} аниме)</div>`;
             
-            // Если загрузили меньше, чем запросили — это последняя страница
             if (nextPage.length < CONFIG.perPage) {
               hasMore = false;
             }
-            
             page++;
           } else {
             hasMore = false;
@@ -256,24 +243,14 @@
       }
 
       console.log(`✅ Загружено ${state.animeList.length} аниме`);
-      
-      // Рендерим список
       renderAnimeList(state.animeList);
       updateAnimeStats(state.animeList);
 
     } catch (error) {
       console.error('❌ Ошибка:', error);
-      
-      let errorText = error.message;
-      if (error.message.includes('прокси') || error.message.includes('cors')) {
-        errorText = '❌ Не удалось подключиться к Shikimori. Попробуй позже или используй VPN';
-      } else if (error.message.includes('404')) {
-        errorText = '❌ Пользователь не найден. Проверь ник на Shikimori (латиница!)';
-      }
-      
       DOM.animeGrid.innerHTML = `
         <div class="loading-anime" style="grid-column:1/-1; color:#ff6b6b; font-size:0.95rem; padding:1.5rem;">
-          ${errorText}
+          ${error.message}
           <br>
           <span style="font-size:0.8rem; color:#8a9bb8; display:block; margin-top:0.8rem;">
             💡 Ник: "${username}"<br>
@@ -286,7 +263,6 @@
     }
   }
 
-  // Функция загрузки одной страницы
   async function fetchAnimePage(username, page) {
     const url = `${CONFIG.shikimoriApiUrl}/${username}/anime_rates?limit=${CONFIG.perPage}&page=${page}&order=id_desc`;
     const proxyUrl = `${CONFIG.proxyUrl}${encodeURIComponent(url)}`;
@@ -303,6 +279,20 @@
     return data || [];
   }
 
+  // --- ФУНКЦИЯ ДЛЯ ПОЛУЧЕНИЯ ПОСТЕРА (заглушка) ---
+  function getAnimePoster(anime) {
+    if (anime.image && anime.image.preview) {
+      return anime.image.preview;
+    }
+    
+    const title = anime.russian || anime.name || '?';
+    const firstChar = title.charAt(0).toUpperCase();
+    const colors = ['#6b8fc9', '#f5a623', '#5865f2', '#ff6b9d', '#4ade80', '#f87171'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='300'%3E%3Crect fill='%231a1f2e' width='200' height='300'/%3E%3Ccircle cx='100' cy='120' r='50' fill='${color.replace('#', '%23')}' opacity='0.15'/%3E%3Ctext x='100' y='140' text-anchor='middle' dy='.3em' fill='${color.replace('#', '%23')}' font-size='56' font-family='sans-serif' font-weight='bold'%3E${firstChar}%3C/text%3E%3C/svg%3E`;
+  }
+
   // --- РЕНДЕРИНГ АНИМЕ ---
   function renderAnimeList(data) {
     if (!DOM.animeGrid) return;
@@ -312,7 +302,6 @@
       return;
     }
 
-    // Показываем все аниме (без ограничений)
     DOM.animeGrid.innerHTML = data.map(item => {
       const anime = item.anime;
       const statusMap = {
@@ -326,18 +315,13 @@
       const status = statusMap[item.status] || item.status || '❓';
       const score = item.score || '—';
       const episodes = anime.episodes || '?';
-      
-      let poster = '';
-      if (anime.image) {
-        poster = anime.image.preview || anime.image.original || '';
-      }
-      
       const title = anime.russian || anime.name || 'Без названия';
+      const poster = getAnimePoster(anime);
 
       return `
         <div class="anime-card">
           <img src="${poster}" alt="${title}" class="anime-poster" loading="lazy" 
-               onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22300%22%3E%3Crect fill=%22%231a1f2e%22 width=%22200%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%236b8fc9%22 font-size=%2224%22 font-family=%22sans-serif%22%3E${title.charAt(0)}%3C/text%3E%3C/svg%3E'">
+               onerror="this.src='${getAnimePoster(anime)}'">
           <div class="anime-title">${title}</div>
           <div class="anime-status">${status}</div>
           <div class="anime-score">⭐ ${score}</div>
@@ -362,7 +346,7 @@
     if (DOM.plannedAnime) DOM.plannedAnime.textContent = planned;
   }
 
-  // --- ПЕРЕКЛЮЧАТЕЛЬ ---
+  // --- ПЕРЕКЛЮЧАТЕЛЬ АНИМЕ ---
   function toggleAnimeList() {
     if (!DOM.animeContainer) return;
 
@@ -421,6 +405,29 @@
     }
   }
 
+  // --- ⭐ НОВЫЙ СЧЁТЧИК "ДНЕЙ НА SHIKIMORI" ---
+  function calculateShikimoriDays() {
+    const daysValue = document.getElementById('daysValue');
+    if (!daysValue) return;
+
+    // 📅 УСТАНОВИ СВОЮ ДАТУ РЕГИСТРАЦИИ НА SHIKIMORI
+    // Формат: new Date(ГОД, МЕСЯЦ-1, ДЕНЬ)
+    const registrationDate = new Date(2023, 8, 14); // ← ЗАМЕНИ НА СВОЮ ДАТУ!
+    // Примеры:
+    // const registrationDate = new Date(2022, 0, 1);  // 1 января 2022
+    // const registrationDate = new Date(2024, 8, 20); // 20 сентября 2024
+
+    const now = new Date();
+    const diffTime = now - registrationDate;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 0) {
+      daysValue.textContent = diffDays;
+    } else {
+      daysValue.textContent = '0';
+    }
+  }
+
   // --- ЗАПУСК ---
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
@@ -428,38 +435,15 @@
     init();
   }
 
-  // Экспорт
+  // Экспорт для ручного вызова
   window.refreshAnime = fetchAllAnime;
   window.showAnime = toggleAnimeList;
+  window.calculateDays = calculateShikimoriDays;
 
   console.log('🚀 script.js загружен!');
   console.log('📌 Команды:');
-  console.log('  - window.refreshAnime() — обновить все аниме');
+  console.log('  - window.refreshAnime() — обновить аниме-лист');
   console.log('  - window.showAnime() — открыть/закрыть список');
+  console.log('  - window.calculateDays() — обновить счётчик дней');
 
-}
-// --- СЧЁТЧИК "ДНЕЙ НА SHIKIMORI" ---
-function calculateShikimoriDays() {
-  const daysElement = document.getElementById('daysCount');
-  if (!daysElement) return;
-
-  // 📅 УСТАНОВИ ДАТУ РЕГИСТРАЦИИ НА SHIKIMORI
-  // Формат: ГГГГ, ММ (0 = январь), ДД
-  const registrationDate = new Date(2023, 8, 14); // ← ЗАМЕНИ НА СВОЮ ДАТУ!
-  // Примеры:
-  // const registrationDate = new Date(2022, 0, 1);  // 1 января 2022
-  // const registrationDate = new Date(2024, 8, 20); // 20 сентября 2024
-
-  const now = new Date();
-  const diffTime = now - registrationDate;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays > 0) {
-    daysElement.textContent = diffDays;
-  } else {
-    daysElement.textContent = '0';
-  }
-}
-
-// --- ЗАПУСК СЧЁТЧИКА ---
-calculateShikimoriDays()
+})();
