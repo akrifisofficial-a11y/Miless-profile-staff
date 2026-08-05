@@ -1,18 +1,21 @@
-// script.js — Исправленная версия с прокси для Shikimori API
+// script.js — Полная загрузка всех аниме (с пагинацией)
 
 (function() {
   'use strict';
 
   // --- КОНФИГУРАЦИЯ ---
   const CONFIG = {
-    shikimoriUsername: 'Miless', // 👈 ЗАМЕНИ НА СВОЙ НИК (латиницей)
+    // 👇👇👇 ЗДЕСЬ ЗАМЕНИ НА СВОЙ НИК 👇👇👇
+    shikimoriUsername: 'Miless', // ← ЗАМЕНИ НА СВОЙ НИК!
+    // 👆👆👆 ЗДЕСЬ ЗАМЕНИ НА СВОЙ НИК 👆👆👆
+    
     shikimoriApiUrl: 'https://shikimori.one/api/users',
-    // Используем прокси для обхода CORS
+    // Прокси для обхода CORS
     proxyUrl: 'https://api.allorigins.win/raw?url=',
+    perPage: 50, // Количество аниме за один запрос
     updateInterval: 30000,
     clockUpdateInterval: 1000,
-    statusCycleInterval: 15000,
-    useRealDiscordAPI: false
+    statusCycleInterval: 15000
   };
 
   // --- СОСТОЯНИЕ ---
@@ -20,35 +23,20 @@
     animeList: [],
     isAnimeVisible: false,
     isQRVisible: false,
+    isLoading: false,
+    totalPages: 0,
+    currentPage: 0,
+    isAllLoaded: false,
     currentStatus: {
       text: 'В сети',
-      activity: '🎮 Играю в GTA',
+      activity: '🎮 Играю в Cyberpunk 2077',
       type: 'online',
       emoji: '🟢'
     }
   };
 
   // --- DOM ЭЛЕМЕНТЫ ---
-  const DOM = {
-    statusIndicator: null,
-    statusDot: null,
-    statusText: null,
-    statusActivity: null,
-    statusBar: null,
-    lastUpdate: null,
-    animeContainer: null,
-    animeGrid: null,
-    totalAnime: null,
-    completedAnime: null,
-    watchingAnime: null,
-    plannedAnime: null,
-    qrContainer: null,
-    qrCode: null,
-    showAnimeBtn: null,
-    showQRBtn: null,
-    closeQRBtn: null,
-    errorMessage: null
-  };
+  const DOM = {};
 
   // --- ИНИЦИАЛИЗАЦИЯ ---
   function init() {
@@ -71,20 +59,21 @@
     DOM.showQRBtn = document.getElementById('showQRBtn');
     DOM.closeQRBtn = document.getElementById('closeQRBtn');
 
+    // Проверяем ник
+    if (CONFIG.shikimoriUsername === 'Miless') {
+      console.warn('⚠️ ВНИМАНИЕ: Используется ник по умолчанию "Miless"');
+      console.warn('💡 Замени его на свой в файле script.js, строка 8');
+    }
+
     // Запускаем системы
     initStatus();
     initClock();
     initButtons();
     initQRCode();
 
-    // Проверяем ник
-    if (CONFIG.shikimoriUsername === 'Miless') {
-      console.warn('⚠️ ВНИМАНИЕ: Используется ник по умолчанию "Miless"');
-      console.warn('💡 Замени его на свой в CONFIG.shikimoriUsername в файле script.js');
-    }
-
     console.log('✅ Сайт инициализирован');
     console.log(`📌 Ник на Shikimori: ${CONFIG.shikimoriUsername}`);
+    console.log('📌 Загрузка всех аниме без ограничений');
   }
 
   // --- СТАТУС (без изменений) ---
@@ -201,62 +190,95 @@
     }
   }
 
-  // --- АНИМЕ-ЛИСТ (Shikimori API с прокси) ---
-  async function fetchAnimeList() {
+  // --- АНИМЕ-ЛИСТ (ПОЛНАЯ ЗАГРУЗКА С ПАГИНАЦИЕЙ) ---
+  async function fetchAllAnime() {
     if (!DOM.animeGrid) return;
     
-    DOM.animeGrid.innerHTML = '<div class="loading-anime">⏳ Загрузка аниме...</div>';
+    // Сбрасываем состояние
+    state.animeList = [];
+    state.currentPage = 0;
+    state.isAllLoaded = false;
+    state.totalPages = 0;
+    
+    DOM.animeGrid.innerHTML = '<div class="loading-anime">⏳ Загрузка всех аниме...</div>';
 
     try {
       const username = CONFIG.shikimoriUsername.trim();
       
       if (!username || username === 'Miless') {
-        throw new Error('❌ Укажи свой ник на Shikimori в настройках (CONFIG.shikimoriUsername)');
+        throw new Error('❌ Укажи свой ник на Shikimori в настройках (строка 8)');
       }
 
-      // Прямой запрос (может не работать из-за CORS)
-      const directUrl = `${CONFIG.shikimoriApiUrl}/${username}/anime_rates?limit=99999&order=id_desc`;
+      // Сначала получаем общее количество
+      const firstPage = await fetchAnimePage(username, 1);
       
-      // Через прокси (работает всегда)
-      const proxyUrl = `${CONFIG.proxyUrl}${encodeURIComponent(directUrl)}`;
-      
-      console.log('🔄 Загрузка аниме с:', proxyUrl);
-      
-      const response = await fetch(proxyUrl);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!firstPage || firstPage.length === 0) {
+        throw new Error('📭 Аниме не найдены. Проверь ник или добавь аниме в список');
       }
 
-      const data = await response.json();
+      // Получаем общее количество страниц из заголовков
+      // Shikimori возвращает пагинацию в заголовках, но через прокси мы её не видим
+      // Поэтому загружаем все страницы в цикле
       
-      if (!data || data.length === 0) {
-        throw new Error('📭 Аниме не найдены. Проверь ник или добавь аниме в список на Shikimori');
+      state.animeList = [...firstPage];
+      let page = 2;
+      let hasMore = true;
+      let totalLoaded = firstPage.length;
+      
+      // Показываем прогресс
+      DOM.animeGrid.innerHTML = `<div class="loading-anime">⏳ Загрузка... (${totalLoaded} аниме)</div>`;
+
+      // Загружаем остальные страницы
+      while (hasMore && page <= 50) { // Максимум 50 страниц (2500 аниме)
+        try {
+          const nextPage = await fetchAnimePage(username, page);
+          
+          if (nextPage && nextPage.length > 0) {
+            state.animeList = state.animeList.concat(nextPage);
+            totalLoaded += nextPage.length;
+            
+            // Обновляем прогресс
+            DOM.animeGrid.innerHTML = `<div class="loading-anime">⏳ Загрузка... (${totalLoaded} аниме)</div>`;
+            
+            // Если загрузили меньше, чем запросили — это последняя страница
+            if (nextPage.length < CONFIG.perPage) {
+              hasMore = false;
+            }
+            
+            page++;
+          } else {
+            hasMore = false;
+          }
+        } catch (error) {
+          console.warn(`⚠️ Страница ${page} не загрузилась:`, error.message);
+          hasMore = false;
+        }
       }
 
-      state.animeList = data;
-      renderAnimeList(data);
-      updateAnimeStats(data);
-      console.log(`✅ Загружено ${data.length} аниме`);
+      console.log(`✅ Загружено ${state.animeList.length} аниме`);
+      
+      // Рендерим список
+      renderAnimeList(state.animeList);
+      updateAnimeStats(state.animeList);
 
     } catch (error) {
-      console.error('❌ Ошибка загрузки аниме:', error);
+      console.error('❌ Ошибка:', error);
       
       let errorText = error.message;
-      if (error.message.includes('404')) {
-        errorText = '❌ Пользователь не найден. Проверь ник на Shikimori (латиница, чувствительно к регистру)';
-      } else if (error.message.includes('CORS')) {
-        errorText = '❌ Ошибка CORS. Попробуй обновить страницу или используй VPN';
+      if (error.message.includes('прокси') || error.message.includes('cors')) {
+        errorText = '❌ Не удалось подключиться к Shikimori. Попробуй позже или используй VPN';
+      } else if (error.message.includes('404')) {
+        errorText = '❌ Пользователь не найден. Проверь ник на Shikimori (латиница!)';
       }
       
       DOM.animeGrid.innerHTML = `
-        <div class="loading-anime" style="grid-column:1/-1; color:#ff6b6b; font-size:1rem;">
+        <div class="loading-anime" style="grid-column:1/-1; color:#ff6b6b; font-size:0.95rem; padding:1.5rem;">
           ${errorText}
           <br>
-          <span style="font-size:0.85rem; color:#8a9bb8; display:block; margin-top:0.5rem;">
-            💡 Проверь ник: "${username}"<br>
-            Перейди на <a href="https://shikimori.one/users/${username}" target="_blank" style="color:#6b8fc9;">
-              https://shikimori.one/users/${username}
+          <span style="font-size:0.8rem; color:#8a9bb8; display:block; margin-top:0.8rem;">
+            💡 Ник: "${username}"<br>
+            Проверь на <a href="https://shikimori.one/users/${username}" target="_blank" style="color:#6b8fc9;">
+              shikimori.one/users/${username}
             </a>
           </span>
         </div>
@@ -264,6 +286,24 @@
     }
   }
 
+  // Функция загрузки одной страницы
+  async function fetchAnimePage(username, page) {
+    const url = `${CONFIG.shikimoriApiUrl}/${username}/anime_rates?limit=${CONFIG.perPage}&page=${page}&order=id_desc`;
+    const proxyUrl = `${CONFIG.proxyUrl}${encodeURIComponent(url)}`;
+    
+    console.log(`🔄 Загрузка страницы ${page}...`);
+    
+    const response = await fetch(proxyUrl);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data || [];
+  }
+
+  // --- РЕНДЕРИНГ АНИМЕ ---
   function renderAnimeList(data) {
     if (!DOM.animeGrid) return;
     
@@ -272,9 +312,8 @@
       return;
     }
 
-    const limited = data.slice(0, 24);
-
-    DOM.animeGrid.innerHTML = limited.map(item => {
+    // Показываем все аниме (без ограничений)
+    DOM.animeGrid.innerHTML = data.map(item => {
       const anime = item.anime;
       const statusMap = {
         'planned': '📅 В планах',
@@ -284,11 +323,10 @@
         'dropped': '❌ Брошено'
       };
 
-      const status = statusMap[item.status] || item.status || '❓ Неизвестно';
+      const status = statusMap[item.status] || item.status || '❓';
       const score = item.score || '—';
       const episodes = anime.episodes || '?';
       
-      // Берём постер, если есть
       let poster = '';
       if (anime.image) {
         poster = anime.image.preview || anime.image.original || '';
@@ -309,6 +347,7 @@
     }).join('');
   }
 
+  // --- СТАТИСТИКА ---
   function updateAnimeStats(data) {
     if (!data) return;
     
@@ -323,6 +362,7 @@
     if (DOM.plannedAnime) DOM.plannedAnime.textContent = planned;
   }
 
+  // --- ПЕРЕКЛЮЧАТЕЛЬ ---
   function toggleAnimeList() {
     if (!DOM.animeContainer) return;
 
@@ -340,7 +380,7 @@
     }
 
     if (state.isAnimeVisible && state.animeList.length === 0) {
-      fetchAnimeList();
+      fetchAllAnime();
     }
   }
 
@@ -375,8 +415,8 @@
           correctLevel: QRCode.CorrectLevel.H
         });
       } catch (error) {
-        console.error('❌ Ошибка генерации QR:', error);
-        DOM.qrCode.innerHTML = '<p style="color:#ff6b6b;">❌ Не удалось создать QR-код</p>';
+        console.error('❌ Ошибка QR:', error);
+        DOM.qrCode.innerHTML = '<p style="color:#ff6b6b;">❌ Ошибка QR</p>';
       }
     }
   }
@@ -388,13 +428,13 @@
     init();
   }
 
-  // Экспортируем функцию для ручного вызова
-  window.refreshAnime = fetchAnimeList;
+  // Экспорт
+  window.refreshAnime = fetchAllAnime;
   window.showAnime = toggleAnimeList;
 
   console.log('🚀 script.js загружен!');
-  console.log('💡 Команды в консоли:');
-  console.log('  - window.refreshAnime() — обновить список аниме');
-  console.log('  - window.showAnime() — открыть/закрыть аниме-лист');
+  console.log('📌 Команды:');
+  console.log('  - window.refreshAnime() — обновить все аниме');
+  console.log('  - window.showAnime() — открыть/закрыть список');
 
 })();
