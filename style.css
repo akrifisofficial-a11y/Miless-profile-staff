@@ -291,3 +291,181 @@ footer {
     font-size: 0.9rem;
   }
 }
+/* --- Аниме-лист --- */
+.anime-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.anime-stats span {
+  color: #a4b3d1;
+  font-size: 0.95rem;
+}
+
+.anime-stats strong {
+  color: #ecefff;
+  font-size: 1.2rem;
+}
+
+.anime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.2rem;
+  margin-top: 1rem;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.anime-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.anime-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+}
+
+.anime-grid::-webkit-scrollbar-thumb {
+  background: rgba(107, 143, 201, 0.3);
+  border-radius: 10px;
+}
+
+.anime-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1.2rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.anime-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(107, 143, 201, 0.2);
+}
+
+.anime-card .anime-poster {
+  width: 100%;
+  aspect-ratio: 2/3;
+  border-radius: 0.8rem;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.anime-card .anime-title {
+  font-size: 0.9rem;
+  color: #ecefff;
+  font-weight: 500;
+  margin-top: 0.3rem;
+  line-height: 1.2;
+}
+
+.anime-card .anime-status {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.8rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #8a9bb8;
+}
+
+.anime-card .anime-score {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f5b84a;
+}
+
+.anime-card .anime-episodes {
+  font-size: 0.75rem;
+  color: #6c7b9c;
+}
+
+.loading-anime {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #6c7b9c;
+  padding: 2rem;
+  font-size: 1.1rem;
+}
+
+/* --- QR-код --- */
+.qr-container {
+  margin: 2rem 0;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 2rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.qr-container h3 {
+  color: #ecefff;
+  margin-bottom: 1.2rem;
+  font-size: 1.3rem;
+}
+
+.qr-container #qrCode {
+  display: inline-block;
+  padding: 1rem;
+  background: white;
+  border-radius: 1rem;
+}
+
+.qr-container #qrCode img,
+.qr-container #qrCode canvas {
+  display: block;
+  margin: 0 auto;
+}
+
+.qr-sub {
+  color: #8a9bb8;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.close-btn {
+  margin-top: 1rem;
+  background: rgba(255, 68, 68, 0.1) !important;
+  border-color: rgba(255, 68, 68, 0.2) !important;
+  color: #ff6b6b !important;
+}
+
+.close-btn:hover {
+  background: rgba(255, 68, 68, 0.2) !important;
+  border-color: rgba(255, 68, 68, 0.3) !important;
+}
+
+/* --- Кнопки-переключатели --- */
+.extra-btn.active {
+  background: rgba(107, 143, 201, 0.15);
+  border-color: rgba(107, 143, 201, 0.3);
+  color: #ecefff;
+}
+
+/* --- Анимация появления --- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anime-grid, .qr-container {
+  animation: fadeInUp 0.4s ease-out;
+}
