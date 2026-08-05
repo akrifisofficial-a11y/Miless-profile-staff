@@ -609,7 +609,7 @@
 
   async function refreshDiscordStatus() {
     console.log('🔄 refreshDiscordStatus() вызвана');
-    if (DISCORD_CONFIG.userId === '123456789012345678') {
+    if (DISCORD_CONFIG.userId === '1438577441231863842') {
       console.warn('⚠️ Discord ID не настроен');
       const usernameEl = document.getElementById('discordUsername');
       if (usernameEl) {
@@ -625,7 +625,7 @@
   // Запускаем Discord интеграцию
   function initDiscord() {
     console.log('🔄 initDiscord() вызвана');
-    if (DISCORD_CONFIG.userId === '123456789012345678') {
+    if (DISCORD_CONFIG.userId === '1438577441231863842') {
       console.warn('⚠️ Вставь свой Discord ID в DISCORD_CONFIG.userId');
       const usernameEl = document.getElementById('discordUsername');
       if (usernameEl) {
