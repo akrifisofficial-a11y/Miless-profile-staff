@@ -9,7 +9,7 @@
     clockUpdateInterval: 1000,  // Обновление часов каждую секунду
     statusCycleInterval: 15000, // Смена демо-статуса (если нет API)
     useRealDiscordAPI: false,   // true = реальный Discord, false = демо-режим
-    discordUserId: '123456789012345678' // ВСТАВЬТЕ СВОЙ ID
+    discordUserId: '1438577441231863842' // ВСТАВЬТЕ СВОЙ ID
   };
 
   // --- СОСТОЯНИЕ СТАТУСА ---
