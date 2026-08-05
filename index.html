@@ -18,7 +18,7 @@
     <!-- Аватар и ник -->
     <div class="profile-header">
       <div class="avatar-wrapper">
-        <img src="https://via.placeholder.com/120/1a1f2e/6b8fc9?text=M" alt="Miless" class="avatar" />
+        <img src="https://shikimori.io/system/users/x160/1361053.png" alt="Miless" class="avatar" />
         <div class="avatar-ring"></div>
       </div>
       <h1>Miless</h1>
@@ -34,7 +34,31 @@
       </div>
     </div>
 
-    <!-- ⭐ НОВЫЙ БЛОК: Счётчик "Дней на Shikimori" -->
+    <!-- ⭐ БЛОК: Discord статус -->
+    <div class="discord-status" id="discordStatus">
+      <div class="discord-header">
+        <i class="fab fa-discord"></i>
+        <span>Discord</span>
+      </div>
+      <div class="discord-content">
+        <div class="discord-avatar" id="discordAvatar">
+          <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Discord" id="discordAvatarImg" />
+          <div class="discord-online" id="discordOnlineDot"></div>
+        </div>
+        <div class="discord-info">
+          <div class="discord-username" id="discordUsername">Загрузка...</div>
+          <div class="discord-activity" id="discordActivity">
+            <span class="activity-icon">🟢</span>
+            <span class="activity-text">Подключение...</span>
+          </div>
+        </div>
+      </div>
+      <div class="discord-extra" id="discordExtra" style="display: none;">
+        <!-- Тут будет показываться игра или Spotify -->
+      </div>
+    </div>
+
+    <!-- ⭐ БЛОК: Счётчик "Дней на Shikimori" -->
     <div class="shikimori-days" id="shikimoriDays">
       <div class="days-number" id="daysCount">
         <i class="fas fa-calendar-alt" style="font-size: 2rem; color: #6b8fc9; margin-right: 0.5rem;"></i>
@@ -132,4 +156,4 @@
   <!-- Подключаем скрипты -->
   <script src="script.js"></script>
 </body>
-</html>
+  </html>
