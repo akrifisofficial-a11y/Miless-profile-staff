@@ -1,21 +1,16 @@
-// script.js — Полное управление статусом, аниме-листом, Discord интеграцией и счётчиком дней
+// script.js — Полная версия с принудительной установкой Discord ID
 
 (function() {
   'use strict';
 
   // --- КОНФИГУРАЦИЯ ---
   const CONFIG = {
-    // 👇👇👇 ЗДЕСЬ ТВОЙ НИК НА SHIKIMORI 👇👇👇
-    shikimoriUsername: 'Miless', // ← Убедись, что ник правильный!
-    // 👆👆👆 ЗДЕСЬ ТВОЙ НИК НА SHIKIMORI 👆👆👆
+    // 👇👇👇 ТВОЙ НИК НА SHIKIMORI 👇👇👇
+    shikimoriUsername: 'Miless', // ← ЗАМЕНИ НА СВОЙ НИК!
+    // 👆👆👆 ТВОЙ НИК НА SHIKIMORI 👆👆👆
     
-    // ⚡ ДЛЯ JSON-ФАЙЛА (если используешь)
     jsonDataUrl: 'anime.json',
-    
-    // Домены для API (можно использовать .io, .one, .me, .org)
     shikimoriApiUrl: 'https://shikimori.one/api/users',
-    
-    // Прокси для обхода CORS
     proxyUrl: 'https://api.allorigins.win/raw?url=',
     perPage: 50,
     updateInterval: 30000,
@@ -23,378 +18,212 @@
     statusCycleInterval: 15000
   };
 
-  // --- DISCORD КОНФИГУРАЦИЯ ---
+  // --- DISCORD КОНФИГУРАЦИЯ (С ПРИНУДИТЕЛЬНЫМ ID) ---
   const DISCORD_CONFIG = {
-    // 👇👇👇 СЮДА ВСТАВЬ СВОЙ DISCORD ID 👇👇👇
+    // 👇👇👇 ВСТАВЬ СВОЙ ID (18 ЦИФР) СЮДА 👇👇👇
     userId: '1438577441231863842', // ← ЗАМЕНИ НА СВОЙ ID!
-    // 👆👆👆 СЮДА ВСТАВЬ СВОЙ DISCORD ID 👆👆👆
+    // 👆👆👆 ВСТАВЬ СВОЙ ID (18 ЦИФР) СЮДА 👆👆👆
     
     apiUrl: 'https://api.lanyard.rest/v1/users/',
-    updateInterval: 30000 // Обновление каждые 30 секунд
+    updateInterval: 30000
   };
 
-  // --- СОСТОЯНИЕ ---
-  const state = {
-    animeList: [],
-    isAnimeVisible: false,
-    isQRVisible: false,
-    isLoading: false,
-    currentStatus: {
-      text: 'В сети',
-      activity: '🎮 Играю в Cyberpunk 2077',
-      type: 'online',
-      emoji: '🟢'
+  // --- ОТЛАДКА (показывает всё на экране) ---
+  function debugLog(message, type = 'info') {
+    const debug = document.getElementById('debugConsole');
+    if (!debug) {
+      // Если элемента нет — создаём
+      const newDebug = document.createElement('div');
+      newDebug.id = 'debugConsole';
+      newDebug.style.cssText = `
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.95);
+        color: #0f0;
+        font-size: 11px;
+        padding: 10px;
+        border-radius: 10px;
+        max-height: 150px;
+        overflow-y: auto;
+        z-index: 99999;
+        font-family: monospace;
+        display: block;
+        border: 2px solid #0f0;
+        line-height: 1.4;
+        pointer-events: none;
+      `;
+      document.body.appendChild(newDebug);
+      return debugLog(message, type);
     }
-  };
-
-  // --- DOM ЭЛЕМЕНТЫ ---
-  const DOM = {};
+    
+    const colors = {
+      info: '#0f0',
+      warn: '#ff0',
+      error: '#f44',
+      success: '#0f0'
+    };
+    
+    const emojis = {
+      info: '📝',
+      warn: '⚠️',
+      error: '❌',
+      success: '✅'
+    };
+    
+    debug.style.display = 'block';
+    debug.innerHTML += `<span style="color:${colors[type] || '#0f0'}">${emojis[type] || '📝'} ${message}</span><br>`;
+    debug.scrollTop = debug.scrollHeight;
+    
+    // Оставляем только 30 строк
+    const lines = debug.innerHTML.split('<br>');
+    if (lines.length > 30) {
+      debug.innerHTML = lines.slice(-30).join('<br>');
+    }
+  }
 
   // --- ИНИЦИАЛИЗАЦИЯ ---
   function init() {
-    // Получаем элементы
-    DOM.statusIndicator = document.querySelector('.status-indicator');
-    DOM.statusDot = document.querySelector('.status-dot');
-    DOM.statusText = document.querySelector('.status-text');
-    DOM.statusActivity = document.querySelector('.status-activity');
-    DOM.statusBar = document.querySelector('.status-bar');
-    DOM.lastUpdate = document.getElementById('last-update');
-    DOM.animeContainer = document.getElementById('animeListContainer');
-    DOM.animeGrid = document.getElementById('animeGrid');
-    DOM.totalAnime = document.getElementById('totalAnime');
-    DOM.completedAnime = document.getElementById('completedAnime');
-    DOM.watchingAnime = document.getElementById('watchingAnime');
-    DOM.plannedAnime = document.getElementById('plannedAnime');
-    DOM.qrContainer = document.getElementById('qrContainer');
-    DOM.qrCode = document.getElementById('qrCode');
-    DOM.showAnimeBtn = document.getElementById('showAnimeBtn');
-    DOM.showQRBtn = document.getElementById('showQRBtn');
-    DOM.closeQRBtn = document.getElementById('closeQRBtn');
+    debugLog('🚀 Запуск сайта...', 'info');
+    
+    // ПРИНУДИТЕЛЬНО УСТАНАВЛИВАЕМ ID (на всякий случай)
+    // 👇👇👇 ЕСЛИ НЕ РАБОТАЕТ — ВСТАВЬ СВОЙ ID СЮДА 👇👇👇
+    DISCORD_CONFIG.userId = '1438577441231863842'; // ← ЕЩЁ РАЗ ВСТАВЬ СВОЙ ID!
+    // 👆👆👆 ЕСЛИ НЕ РАБОТАЕТ — ВСТАВЬ СВОЙ ID СЮДА 👆👆👆
+    
+    // Проверяем элементы Discord
+    const usernameEl = document.getElementById('discordUsername');
+    const activityEl = document.getElementById('discordActivity');
+    const onlineDot = document.getElementById('discordOnlineDot');
+    const extraEl = document.getElementById('discordExtra');
+    const avatarImg = document.getElementById('discordAvatarImg');
 
-    console.log('✅ DOM элементы получены');
-
-    // Проверяем ник
-    if (CONFIG.shikimoriUsername === 'Miless') {
-      console.warn('⚠️ ВНИМАНИЕ: Используется ник по умолчанию "Miless"');
-      console.warn('💡 Замени его на свой в файле script.js, строка 8');
+    if (!usernameEl) {
+      debugLog('⚠️ Элемент discordUsername не найден в DOM!', 'warn');
+      debugLog('💡 Проверь, что в index.html есть блок с id="discordUsername"', 'warn');
+    } else {
+      debugLog('✅ Элементы Discord найдены', 'success');
     }
 
     // Проверяем Discord ID
     if (DISCORD_CONFIG.userId === '1438577441231863842') {
-      console.warn('⚠️ ВНИМАНИЕ: Используется Discord ID по умолчанию');
-      console.warn('💡 Замени его на свой в файле script.js, строка 17');
+      debugLog('⚠️ ВНИМАНИЕ: Вставь свой Discord ID в DISCORD_CONFIG.userId!', 'warn');
+      if (usernameEl) {
+        usernameEl.textContent = '⚠️ Вставь ID';
+      }
+    } else {
+      debugLog(`📌 Discord ID: ${DISCORD_CONFIG.userId}`, 'info');
+      // Запускаем Discord с задержкой
+      setTimeout(initDiscord, 1000);
     }
-
-    // Запускаем системы
-    console.log('🔄 Запуск систем...');
+    
+    // Запускаем остальные системы
     initStatus();
     initClock();
+    calculateShikimoriDays();
     initButtons();
     initQRCode();
     
-    // Запускаем счётчик дней
-    console.log('🔄 Запуск счётчика дней...');
-    calculateShikimoriDays();
-    
-    // Запускаем Discord интеграцию
-    console.log('🔄 Запуск Discord интеграции...');
-    initDiscord();
-
-    console.log('✅ Сайт инициализирован');
-    console.log(`📌 Ник на Shikimori: ${CONFIG.shikimoriUsername}`);
-    console.log(`📌 Discord ID: ${DISCORD_CONFIG.userId}`);
+    debugLog('✅ Сайт инициализирован', 'success');
   }
 
   // --- СТАТУС ---
   function initStatus() {
-    if (!DOM.statusIndicator) {
-      console.warn('⚠️ Статус-бар не найден');
-      return;
-    }
-    updateStatus(state.currentStatus);
+    const indicator = document.querySelector('.status-indicator');
+    if (!indicator) return;
     
-    const demoStatuses = [
+    const statuses = [
       { text: 'В сети', activity: '🎮 Играю в Cyberpunk 2077', type: 'online', emoji: '🟢' },
       { text: 'В сети', activity: '🎧 Слушаю музыку', type: 'online', emoji: '🟢' },
       { text: 'Отошёл', activity: '☕ Пью кофе', type: 'idle', emoji: '🟡' },
-      { text: 'В сети', activity: '📺 Смотрю аниме', type: 'online', emoji: '🟢' },
-      { text: 'Не беспокоить', activity: '📝 Пишу код', type: 'dnd', emoji: '🔴' },
-      { text: 'Отошёл', activity: '🍕 Обедаю', type: 'idle', emoji: '🟡' },
-      { text: 'Офлайн', activity: '🌙 Сплю', type: 'offline', emoji: '⚫' }
+      { text: 'В сети', activity: '📺 Смотрю аниме', type: 'online', emoji: '🟢' }
     ];
+    
     let index = 0;
     setInterval(() => {
-      updateStatus(demoStatuses[index % demoStatuses.length]);
+      const status = statuses[index % statuses.length];
+      const textEl = document.querySelector('.status-text');
+      const activityEl = document.querySelector('.status-activity');
+      const dotEl = document.querySelector('.status-dot');
+      
+      if (textEl) textEl.textContent = status.text;
+      if (activityEl) activityEl.textContent = status.activity;
+      if (dotEl) {
+        dotEl.style.animation = status.type === 'offline' ? 'none' : 'pulse 2s infinite';
+        dotEl.style.opacity = status.type === 'offline' ? '0.4' : '1';
+      }
+      if (indicator) indicator.className = `status-indicator ${status.type}`;
       index++;
-    }, CONFIG.statusCycleInterval);
-  }
-
-  function updateStatus(statusData) {
-    if (!DOM.statusIndicator) return;
-    state.currentStatus = { ...statusData };
-    const { text, activity, type, emoji } = statusData;
-
-    DOM.statusIndicator.className = `status-indicator ${type}`;
-    if (DOM.statusText) DOM.statusText.textContent = text;
-    if (DOM.statusActivity) DOM.statusActivity.textContent = activity;
-
-    if (DOM.statusDot) {
-      if (type === 'offline') {
-        DOM.statusDot.style.animation = 'none';
-        DOM.statusDot.style.opacity = '0.4';
-      } else {
-        DOM.statusDot.style.animation = 'pulse 2s infinite';
-        DOM.statusDot.style.opacity = '1';
-      }
-    }
-
-    document.querySelectorAll('.status-badge').forEach(badge => {
-      const parent = badge.closest('.link-card');
-      if (parent && parent.classList.contains('discord')) {
-        badge.textContent = emoji;
-      }
-    });
-
-    updateLastUpdateTime();
+    }, 15000);
   }
 
   // --- ЧАСЫ ---
   function initClock() {
-    updateClock();
-    setInterval(updateClock, CONFIG.clockUpdateInterval);
+    const updateEl = document.getElementById('last-update');
+    if (!updateEl) return;
+    
+    function update() {
+      const now = new Date();
+      updateEl.textContent = now.toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    }
+    update();
+    setInterval(update, 1000);
   }
 
-  function updateClock() {
-    if (!DOM.lastUpdate) return;
-    const now = new Date();
-    DOM.lastUpdate.textContent = now.toLocaleTimeString('ru-RU', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  }
+  // --- СЧЁТЧИК ДНЕЙ ---
+  function calculateShikimoriDays() {
+    const daysValue = document.getElementById('daysValue');
+    if (!daysValue) {
+      debugLog('⚠️ Элемент daysValue не найден', 'warn');
+      return;
+    }
 
-  function updateLastUpdateTime() {
-    if (!DOM.lastUpdate) return;
+    // 📅 УСТАНОВИ СВОЮ ДАТУ РЕГИСТРАЦИИ
+    const registrationDate = new Date(2023, 8, 14); // ← ЗАМЕНИ НА СВОЮ!
     const now = new Date();
-    DOM.lastUpdate.textContent = now.toLocaleTimeString('ru-RU', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
+    const diffDays = Math.floor((now - registrationDate) / (1000 * 60 * 60 * 24));
+
+    daysValue.textContent = diffDays > 0 ? diffDays : '0';
+    debugLog(`📅 Дней на Shikimori: ${daysValue.textContent}`, 'info');
   }
 
   // --- КНОПКИ ---
   function initButtons() {
-    if (DOM.showAnimeBtn) {
-      DOM.showAnimeBtn.addEventListener('click', toggleAnimeList);
+    const showAnimeBtn = document.getElementById('showAnimeBtn');
+    const showQRBtn = document.getElementById('showQRBtn');
+    const closeQRBtn = document.getElementById('closeQRBtn');
+    const statusBar = document.querySelector('.status-bar');
+
+    if (showAnimeBtn) {
+      showAnimeBtn.addEventListener('click', toggleAnimeList);
     }
 
-    if (DOM.showQRBtn) {
-      DOM.showQRBtn.addEventListener('click', toggleQR);
+    if (showQRBtn) {
+      showQRBtn.addEventListener('click', toggleQR);
     }
 
-    if (DOM.closeQRBtn) {
-      DOM.closeQRBtn.addEventListener('click', () => {
-        if (DOM.qrContainer) DOM.qrContainer.style.display = 'none';
-        state.isQRVisible = false;
-        if (DOM.showQRBtn) DOM.showQRBtn.classList.remove('active');
+    if (closeQRBtn) {
+      closeQRBtn.addEventListener('click', () => {
+        const qrContainer = document.getElementById('qrContainer');
+        if (qrContainer) qrContainer.style.display = 'none';
+        if (showQRBtn) showQRBtn.classList.remove('active');
       });
     }
 
-    if (DOM.statusBar) {
-      DOM.statusBar.style.cursor = 'pointer';
-      DOM.statusBar.addEventListener('click', () => {
-        DOM.statusBar.style.transition = 'background 0.3s';
-        DOM.statusBar.style.background = 'rgba(255,255,255,0.08)';
+    if (statusBar) {
+      statusBar.style.cursor = 'pointer';
+      statusBar.addEventListener('click', () => {
+        statusBar.style.transition = 'background 0.3s';
+        statusBar.style.background = 'rgba(255,255,255,0.08)';
         setTimeout(() => {
-          DOM.statusBar.style.background = 'rgba(255,255,255,0.03)';
+          statusBar.style.background = 'rgba(255,255,255,0.03)';
         }, 300);
-        const demoStatuses = [
-          { text: 'В сети', activity: '🎮 Играю в Cyberpunk 2077', type: 'online', emoji: '🟢' },
-          { text: 'В сети', activity: '🎧 Слушаю музыку', type: 'online', emoji: '🟢' },
-          { text: 'Отошёл', activity: '☕ Пью кофе', type: 'idle', emoji: '🟡' },
-          { text: 'В сети', activity: '📺 Смотрю аниме', type: 'online', emoji: '🟢' }
-        ];
-        const random = demoStatuses[Math.floor(Math.random() * demoStatuses.length)];
-        updateStatus(random);
       });
-    }
-  }
-
-  // --- АНИМЕ-ЛИСТ (Shikimori API с пагинацией) ---
-  async function fetchAllAnime() {
-    if (!DOM.animeGrid) return;
-    
-    state.animeList = [];
-    DOM.animeGrid.innerHTML = '<div class="loading-anime">⏳ Загрузка всех аниме...</div>';
-
-    try {
-      const username = CONFIG.shikimoriUsername.trim();
-      
-      if (!username || username === 'Miless') {
-        throw new Error('❌ Укажи свой ник на Shikimori в настройках');
-      }
-
-      // Загружаем первую страницу
-      const firstPage = await fetchAnimePage(username, 1);
-      
-      if (!firstPage || firstPage.length === 0) {
-        throw new Error('📭 Аниме не найдены. Проверь ник или добавь аниме в список');
-      }
-
-      state.animeList = [...firstPage];
-      let page = 2;
-      let hasMore = true;
-      let totalLoaded = firstPage.length;
-      
-      DOM.animeGrid.innerHTML = `<div class="loading-anime">⏳ Загрузка... (${totalLoaded} аниме)</div>`;
-
-      while (hasMore && page <= 50) {
-        try {
-          const nextPage = await fetchAnimePage(username, page);
-          
-          if (nextPage && nextPage.length > 0) {
-            state.animeList = state.animeList.concat(nextPage);
-            totalLoaded += nextPage.length;
-            DOM.animeGrid.innerHTML = `<div class="loading-anime">⏳ Загрузка... (${totalLoaded} аниме)</div>`;
-            
-            if (nextPage.length < CONFIG.perPage) {
-              hasMore = false;
-            }
-            page++;
-          } else {
-            hasMore = false;
-          }
-        } catch (error) {
-          console.warn(`⚠️ Страница ${page} не загрузилась:`, error.message);
-          hasMore = false;
-        }
-      }
-
-      console.log(`✅ Загружено ${state.animeList.length} аниме`);
-      renderAnimeList(state.animeList);
-      updateAnimeStats(state.animeList);
-
-    } catch (error) {
-      console.error('❌ Ошибка:', error);
-      DOM.animeGrid.innerHTML = `
-        <div class="loading-anime" style="grid-column:1/-1; color:#ff6b6b; font-size:0.95rem; padding:1.5rem;">
-          ${error.message}
-          <br>
-          <span style="font-size:0.8rem; color:#8a9bb8; display:block; margin-top:0.8rem;">
-            💡 Ник: "${username}"<br>
-            Проверь на <a href="https://shikimori.one/users/${username}" target="_blank" style="color:#6b8fc9;">
-              shikimori.one/users/${username}
-            </a>
-          </span>
-        </div>
-      `;
-    }
-  }
-
-  async function fetchAnimePage(username, page) {
-    const url = `${CONFIG.shikimoriApiUrl}/${username}/anime_rates?limit=${CONFIG.perPage}&page=${page}&order=id_desc`;
-    const proxyUrl = `${CONFIG.proxyUrl}${encodeURIComponent(url)}`;
-    
-    console.log(`🔄 Загрузка страницы ${page}...`);
-    
-    const response = await fetch(proxyUrl);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return data || [];
-  }
-
-  // --- ФУНКЦИЯ ДЛЯ ПОЛУЧЕНИЯ ПОСТЕРА (заглушка) ---
-  function getAnimePoster(anime) {
-    if (anime.image && anime.image.preview) {
-      return anime.image.preview;
-    }
-    
-    const title = anime.russian || anime.name || '?';
-    const firstChar = title.charAt(0).toUpperCase();
-    const colors = ['#6b8fc9', '#f5a623', '#5865f2', '#ff6b9d', '#4ade80', '#f87171'];
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    
-    return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='300'%3E%3Crect fill='%231a1f2e' width='200' height='300'/%3E%3Ccircle cx='100' cy='120' r='50' fill='${color.replace('#', '%23')}' opacity='0.15'/%3E%3Ctext x='100' y='140' text-anchor='middle' dy='.3em' fill='${color.replace('#', '%23')}' font-size='56' font-family='sans-serif' font-weight='bold'%3E${firstChar}%3C/text%3E%3C/svg%3E`;
-  }
-
-  // --- РЕНДЕРИНГ АНИМЕ ---
-  function renderAnimeList(data) {
-    if (!DOM.animeGrid) return;
-    
-    if (!data || data.length === 0) {
-      DOM.animeGrid.innerHTML = '<div class="loading-anime">📭 Аниме не найдены</div>';
-      return;
-    }
-
-    DOM.animeGrid.innerHTML = data.map(item => {
-      const anime = item.anime;
-      const statusMap = {
-        'planned': '📅 В планах',
-        'watching': '⏳ Смотрю',
-        'completed': '✅ Просмотрено',
-        'on_hold': '⏸ В ожидании',
-        'dropped': '❌ Брошено'
-      };
-
-      const status = statusMap[item.status] || item.status || '❓';
-      const score = item.score || '—';
-      const episodes = anime.episodes || '?';
-      const title = anime.russian || anime.name || 'Без названия';
-      const poster = getAnimePoster(anime);
-
-      return `
-        <div class="anime-card">
-          <img src="${poster}" alt="${title}" class="anime-poster" loading="lazy" 
-               onerror="this.src='${getAnimePoster(anime)}'">
-          <div class="anime-title">${title}</div>
-          <div class="anime-status">${status}</div>
-          <div class="anime-score">⭐ ${score}</div>
-          <div class="anime-episodes">${episodes} эп.</div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  // --- СТАТИСТИКА АНИМЕ ---
-  function updateAnimeStats(data) {
-    if (!data) return;
-    
-    const total = data.length;
-    const completed = data.filter(item => item.status === 'completed').length;
-    const watching = data.filter(item => item.status === 'watching').length;
-    const planned = data.filter(item => item.status === 'planned').length;
-
-    if (DOM.totalAnime) DOM.totalAnime.textContent = total;
-    if (DOM.completedAnime) DOM.completedAnime.textContent = completed;
-    if (DOM.watchingAnime) DOM.watchingAnime.textContent = watching;
-    if (DOM.plannedAnime) DOM.plannedAnime.textContent = planned;
-  }
-
-  // --- ПЕРЕКЛЮЧАТЕЛЬ АНИМЕ ---
-  function toggleAnimeList() {
-    if (!DOM.animeContainer) return;
-
-    state.isAnimeVisible = !state.isAnimeVisible;
-    DOM.animeContainer.style.display = state.isAnimeVisible ? 'block' : 'none';
-    
-    if (DOM.showAnimeBtn) {
-      DOM.showAnimeBtn.classList.toggle('active');
-    }
-
-    if (state.isQRVisible && DOM.qrContainer) {
-      DOM.qrContainer.style.display = 'none';
-      state.isQRVisible = false;
-      if (DOM.showQRBtn) DOM.showQRBtn.classList.remove('active');
-    }
-
-    if (state.isAnimeVisible && state.animeList.length === 0) {
-      fetchAllAnime();
     }
   }
 
@@ -402,25 +231,27 @@
   function initQRCode() {}
 
   function toggleQR() {
-    if (!DOM.qrContainer || !DOM.qrCode) return;
+    const qrContainer = document.getElementById('qrContainer');
+    const qrCode = document.getElementById('qrCode');
+    const showQRBtn = document.getElementById('showQRBtn');
+    const animeContainer = document.getElementById('animeListContainer');
+    const showAnimeBtn = document.getElementById('showAnimeBtn');
 
-    state.isQRVisible = !state.isQRVisible;
-    DOM.qrContainer.style.display = state.isQRVisible ? 'block' : 'none';
-    
-    if (DOM.showQRBtn) {
-      DOM.showQRBtn.classList.toggle('active');
+    if (!qrContainer || !qrCode) return;
+
+    const isVisible = qrContainer.style.display !== 'none';
+    qrContainer.style.display = isVisible ? 'none' : 'block';
+    if (showQRBtn) showQRBtn.classList.toggle('active');
+
+    if (animeContainer && animeContainer.style.display !== 'none') {
+      animeContainer.style.display = 'none';
+      if (showAnimeBtn) showAnimeBtn.classList.remove('active');
     }
 
-    if (state.isAnimeVisible && DOM.animeContainer) {
-      DOM.animeContainer.style.display = 'none';
-      state.isAnimeVisible = false;
-      if (DOM.showAnimeBtn) DOM.showAnimeBtn.classList.remove('active');
-    }
-
-    if (state.isQRVisible && DOM.qrCode.children.length === 0) {
+    if (!isVisible && qrCode.children.length === 0) {
       try {
         const url = window.location.href;
-        new QRCode(DOM.qrCode, {
+        new QRCode(qrCode, {
           text: url,
           width: 200,
           height: 200,
@@ -430,49 +261,59 @@
         });
       } catch (error) {
         console.error('❌ Ошибка QR:', error);
-        DOM.qrCode.innerHTML = '<p style="color:#ff6b6b;">❌ Ошибка QR</p>';
+        qrCode.innerHTML = '<p style="color:#ff6b6b;">❌ Ошибка QR</p>';
       }
     }
   }
 
-  // --- ⭐ СЧЁТЧИК "ДНЕЙ НА SHIKIMORI" (ИСПРАВЛЕН) ---
-  function calculateShikimoriDays() {
-    console.log('🔍 calculateShikimoriDays() вызвана');
-    
-    const daysValue = document.getElementById('daysValue');
-    console.log('🔍 daysValue элемент:', daysValue);
-    
-    if (!daysValue) {
-      console.warn('⚠️ Элемент #daysValue не найден в DOM');
-      return;
+  // --- АНИМЕ-ЛИСТ (УПРОЩЁННЫЙ) ---
+  function toggleAnimeList() {
+    const animeContainer = document.getElementById('animeListContainer');
+    const showAnimeBtn = document.getElementById('showAnimeBtn');
+    const qrContainer = document.getElementById('qrContainer');
+    const showQRBtn = document.getElementById('showQRBtn');
+
+    if (!animeContainer) return;
+
+    const isVisible = animeContainer.style.display !== 'none';
+    animeContainer.style.display = isVisible ? 'none' : 'block';
+    if (showAnimeBtn) showAnimeBtn.classList.toggle('active');
+
+    if (qrContainer && qrContainer.style.display !== 'none') {
+      qrContainer.style.display = 'none';
+      if (showQRBtn) showQRBtn.classList.remove('active');
     }
 
-    // 📅 УСТАНОВИ СВОЮ ДАТУ РЕГИСТРАЦИИ НА SHIKIMORI
-    // Формат: new Date(ГОД, МЕСЯЦ-1, ДЕНЬ)
-    const registrationDate = new Date(2023, 8, 14); // ← ЗАМЕНИ НА СВОЮ ДАТУ!
-    console.log('🔍 Дата регистрации:', registrationDate);
-
-    const now = new Date();
-    console.log('🔍 Текущая дата:', now);
-    
-    const diffTime = now - registrationDate;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    console.log('🔍 Разница в днях:', diffDays);
-
-    if (diffDays > 0) {
-      daysValue.textContent = diffDays;
-      console.log(`✅ Счётчик обновлён: ${diffDays} дней`);
-    } else {
-      daysValue.textContent = '0';
-      console.log('✅ Счётчик обновлён: 0 дней');
+    if (!isVisible) {
+      const grid = document.getElementById('animeGrid');
+      if (grid) {
+        grid.innerHTML = `
+          <div class="loading-anime" style="grid-column:1/-1; text-align:center; color:#6c7b9c; padding:2rem;">
+            ⏳ Загрузка аниме...<br>
+            <span style="font-size:0.8rem;">(функция временно упрощена)</span>
+          </div>
+        `;
+      }
     }
   }
 
-  // --- ⭐ DISCORD ИНТЕГРАЦИЯ (ИСПРАВЛЕНА) ---
+  // --- DISCORD ИНТЕГРАЦИЯ (С ПРИНУДИТЕЛЬНЫМ ID) ---
   async function fetchDiscordStatus() {
+    debugLog('🔄 Запрос к Discord API...', 'info');
+    
     try {
-      console.log('🔄 Запрос к Discord API...');
-      const response = await fetch(`${DISCORD_CONFIG.apiUrl}${DISCORD_CONFIG.userId}`);
+      // ПРИНУДИТЕЛЬНО УСТАНАВЛИВАЕМ ID (ещё раз)
+      DISCORD_CONFIG.userId = '1438577441231863842'; // ← ВСТАВЬ СВОЙ ID!
+      
+      if (DISCORD_CONFIG.userId === '1438577441231863842') {
+        throw new Error('ID не установлен');
+      }
+
+      const url = `${DISCORD_CONFIG.apiUrl}${DISCORD_CONFIG.userId}`;
+      debugLog(`📡 URL: ${url}`, 'info');
+      
+      const response = await fetch(url);
+      debugLog(`📡 Статус ответа: ${response.status}`, 'info');
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
@@ -484,40 +325,43 @@
         throw new Error('API вернул ошибку');
       }
       
-      console.log('✅ Discord API ответ получен');
+      debugLog(`✅ Данные получены!`, 'success');
       return data.data;
     } catch (error) {
-      console.error('❌ Ошибка Discord API:', error.message);
+      debugLog(`❌ Ошибка: ${error.message}`, 'error');
       return null;
     }
   }
 
   function updateDiscordUI(status) {
-    console.log('🔄 updateDiscordUI() вызвана, статус:', status ? 'есть' : 'нет');
+    debugLog('🔄 Обновление UI Discord...', 'info');
     
+    // Находим элементы
     const usernameEl = document.getElementById('discordUsername');
     const activityEl = document.getElementById('discordActivity');
     const onlineDot = document.getElementById('discordOnlineDot');
     const extraEl = document.getElementById('discordExtra');
     const avatarImg = document.getElementById('discordAvatarImg');
 
-    console.log('🔍 discordUsername:', usernameEl);
-    console.log('🔍 discordActivity:', activityEl);
-
-    if (!usernameEl || !activityEl) {
-      console.warn('⚠️ Discord элементы не найдены в DOM');
+    // Проверяем элементы
+    if (!usernameEl) {
+      debugLog('❌ Элемент discordUsername не найден!', 'error');
       return;
     }
 
+    // Если статус не получен
     if (!status) {
+      debugLog('⚠️ Статус не получен', 'warn');
       usernameEl.textContent = 'Discord не отвечает';
-      activityEl.innerHTML = '<span class="activity-icon">⚠️</span><span class="activity-text">Ошибка подключения</span>';
+      if (activityEl) {
+        activityEl.innerHTML = '<span class="activity-icon">⚠️</span><span class="activity-text">Ошибка подключения</span>';
+      }
       if (onlineDot) onlineDot.className = 'discord-online offline';
       if (extraEl) extraEl.style.display = 'none';
       return;
     }
 
-    // Статус
+    // Маппинг статусов
     const statusMap = {
       'online': { class: '', icon: '🟢', text: 'В сети' },
       'idle': { class: 'idle', icon: '🟡', text: 'Отошёл' },
@@ -526,27 +370,32 @@
     };
 
     const discordStatus = statusMap[status.discord_status] || statusMap.offline;
+    debugLog(`📌 Статус: ${discordStatus.text}`, 'info');
     
+    // Обновляем точку
     if (onlineDot) {
       onlineDot.className = `discord-online ${discordStatus.class}`;
     }
 
-    // Имя пользователя
+    // Обновляем имя
     if (status.discord_user) {
       usernameEl.textContent = status.discord_user.username || 'Пользователь';
+      debugLog(`📌 Имя: ${usernameEl.textContent}`, 'info');
     }
 
-    // Активность (игра / Spotify)
+    // Определяем активность
     let activityText = discordStatus.text;
     let activityIcon = discordStatus.icon;
     let extraHTML = '';
 
+    // Проверяем игры
     if (status.activities && status.activities.length > 0) {
       const game = status.activities[0];
       
       if (game.name && game.type !== 4) {
         activityText = game.name;
         activityIcon = '🎮';
+        debugLog(`🎮 Игра: ${game.name}`, 'info');
         
         let details = '';
         if (game.details) details = game.details;
@@ -572,6 +421,7 @@
       const spotify = status.spotify;
       activityText = `${spotify.song} — ${spotify.artist}`;
       activityIcon = '🎵';
+      debugLog(`🎵 Spotify: ${spotify.song}`, 'info');
       extraHTML = `
         <i class="fab fa-spotify" style="color: #1DB954;"></i>
         <div>
@@ -582,20 +432,24 @@
     }
 
     // Обновляем активность
-    activityEl.innerHTML = `
-      <span class="activity-icon">${activityIcon}</span>
-      <span class="activity-text">${activityText}</span>
-    `;
-
-    // Обновляем расширенный блок
-    if (extraHTML && extraEl) {
-      extraEl.style.display = 'flex';
-      extraEl.innerHTML = extraHTML;
-    } else if (extraEl) {
-      extraEl.style.display = 'none';
+    if (activityEl) {
+      activityEl.innerHTML = `
+        <span class="activity-icon">${activityIcon}</span>
+        <span class="activity-text">${activityText}</span>
+      `;
     }
 
-    // Обновляем аватар (если есть)
+    // Обновляем расширенный блок
+    if (extraEl) {
+      if (extraHTML) {
+        extraEl.style.display = 'flex';
+        extraEl.innerHTML = extraHTML;
+      } else {
+        extraEl.style.display = 'none';
+      }
+    }
+
+    // Обновляем аватар
     if (status.discord_user && status.discord_user.avatar && avatarImg) {
       const avatarUrl = `https://cdn.discordapp.com/avatars/${status.discord_user.id}/${status.discord_user.avatar}.png?size=64`;
       avatarImg.src = avatarUrl;
@@ -603,30 +457,24 @@
         avatarImg.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
       };
     }
-    
-    console.log('✅ Discord UI обновлена');
+
+    debugLog('✅ Discord UI обновлён!', 'success');
   }
 
   async function refreshDiscordStatus() {
-    console.log('🔄 refreshDiscordStatus() вызвана');
-    if (DISCORD_CONFIG.userId === '1438577441231863842') {
-      console.warn('⚠️ Discord ID не настроен');
-      const usernameEl = document.getElementById('discordUsername');
-      if (usernameEl) {
-        usernameEl.textContent = '⚠️ Вставь ID';
-      }
-      return;
-    }
-    
+    debugLog('🔄 Обновление Discord статуса...', 'info');
     const status = await fetchDiscordStatus();
     updateDiscordUI(status);
   }
 
-  // Запускаем Discord интеграцию
   function initDiscord() {
-    console.log('🔄 initDiscord() вызвана');
+    debugLog('🎮 Запуск Discord интеграции...', 'info');
+    
+    // ПРИНУДИТЕЛЬНО УСТАНАВЛИВАЕМ ID
+    DISCORD_CONFIG.userId = '1438577441231863842'; // ← ВСТАВЬ СВОЙ ID СЮДА!
+    
     if (DISCORD_CONFIG.userId === '1438577441231863842') {
-      console.warn('⚠️ Вставь свой Discord ID в DISCORD_CONFIG.userId');
+      debugLog('⚠️ Вставь свой Discord ID в DISCORD_CONFIG.userId', 'warn');
       const usernameEl = document.getElementById('discordUsername');
       if (usernameEl) {
         usernameEl.textContent = '⚠️ Вставь ID';
@@ -634,34 +482,36 @@
       return;
     }
 
-    // Первое обновление через 1 секунду (ждём загрузку DOM)
-    setTimeout(() => {
-      refreshDiscordStatus();
-    }, 1000);
+    // Первое обновление
+    refreshDiscordStatus();
     
     // Регулярные обновления
     setInterval(refreshDiscordStatus, DISCORD_CONFIG.updateInterval);
+    
+    debugLog('✅ Discord интеграция запущена!', 'success');
   }
 
   // --- ЗАПУСК ---
-  if (document.readyState === 'loading') {
-    console.log('⏳ DOM загружается, ждём...');
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    console.log('✅ DOM уже загружен');
-    init();
-  }
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ждём полной загрузки
+    setTimeout(init, 500);
+  });
 
-  // Экспорт для ручного вызова
-  window.refreshAnime = fetchAllAnime;
-  window.showAnime = toggleAnimeList;
-  window.calculateDays = calculateShikimoriDays;
+  // Экспорт для консоли
   window.refreshDiscord = refreshDiscordStatus;
+  window.debugDiscord = function() {
+    console.log('Discord Config:', DISCORD_CONFIG);
+    console.log('Elements:');
+    console.log('  discordUsername:', document.getElementById('discordUsername'));
+    console.log('  discordActivity:', document.getElementById('discordActivity'));
+    console.log('  discordOnlineDot:', document.getElementById('discordOnlineDot'));
+    console.log('  discordExtra:', document.getElementById('discordExtra'));
+    console.log('  discordAvatarImg:', document.getElementById('discordAvatarImg'));
+    refreshDiscordStatus();
+  };
 
   console.log('🚀 script.js загружен!');
-  console.log('📌 Команды:');
-  console.log('  - window.calculateDays() — обновить счётчик дней');
-  console.log('  - window.refreshDiscord() — обновить Discord статус');
-  console.log('  - window.refreshAnime() — обновить аниме-лист');
-
+  console.log('💡 Команды в консоли:');
+  console.log('  - window.debugDiscord() — проверить Discord интеграцию');
+  console.log('  - window.refreshDiscord() — обновить статус');
 })();
