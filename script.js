@@ -437,4 +437,29 @@
   console.log('  - window.refreshAnime() — обновить все аниме');
   console.log('  - window.showAnime() — открыть/закрыть список');
 
-})();
+}
+// --- СЧЁТЧИК "ДНЕЙ НА SHIKIMORI" ---
+function calculateShikimoriDays() {
+  const daysElement = document.getElementById('daysCount');
+  if (!daysElement) return;
+
+  // 📅 УСТАНОВИ ДАТУ РЕГИСТРАЦИИ НА SHIKIMORI
+  // Формат: ГГГГ, ММ (0 = январь), ДД
+  const registrationDate = new Date(2023, 8, 14); // ← ЗАМЕНИ НА СВОЮ ДАТУ!
+  // Примеры:
+  // const registrationDate = new Date(2022, 0, 1);  // 1 января 2022
+  // const registrationDate = new Date(2024, 8, 20); // 20 сентября 2024
+
+  const now = new Date();
+  const diffTime = now - registrationDate;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays > 0) {
+    daysElement.textContent = diffDays;
+  } else {
+    daysElement.textContent = '0';
+  }
+}
+
+// --- ЗАПУСК СЧЁТЧИКА ---
+calculateShikimoriDays()
