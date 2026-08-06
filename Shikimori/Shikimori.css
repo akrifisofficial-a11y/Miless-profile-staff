@@ -1,0 +1,366 @@
+/* shikimori.css — Стили для страницы Shikimori */
+
+/* --- Статистика --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1.5rem;
+  padding: 1.2rem 1rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(107, 143, 201, 0.2);
+}
+
+.stat-number {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ecefff;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #8a9bb8;
+  margin-top: 0.3rem;
+}
+
+/* --- Контролы --- */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+  padding: 1.2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  align-items: center;
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.filter-btn {
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #a4b3d1;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.filter-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ecefff;
+}
+
+.filter-btn.active {
+  background: rgba(107, 143, 201, 0.15);
+  border-color: rgba(107, 143, 201, 0.3);
+  color: #ecefff;
+}
+
+.sort-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #a4b3d1;
+  font-size: 0.9rem;
+}
+
+.sort-group select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #d0ddff;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.sort-group select option {
+  background: #1a1f2e;
+}
+
+.search-group {
+  flex: 1;
+  min-width: 150px;
+}
+
+.search-group input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #d0ddff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.search-group input:focus {
+  outline: none;
+  border-color: rgba(107, 143, 201, 0.3);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.search-group input::placeholder {
+  color: #6c7b9c;
+}
+
+/* --- Аниме-грид --- */
+.anime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+
+.anime-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1.2rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.anime-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(107, 143, 201, 0.2);
+}
+
+.anime-card .anime-poster {
+  width: 100%;
+  aspect-ratio: 2/3;
+  border-radius: 0.8rem;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.anime-card .anime-title {
+  font-size: 0.9rem;
+  color: #ecefff;
+  font-weight: 500;
+  margin-top: 0.3rem;
+  line-height: 1.2;
+}
+
+.anime-card .anime-status {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.8rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #8a9bb8;
+}
+
+.anime-card .anime-score {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f5b84a;
+}
+
+.anime-card .anime-episodes {
+  font-size: 0.75rem;
+  color: #6c7b9c;
+}
+
+.anime-card .anime-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  justify-content: center;
+  margin-top: 0.3rem;
+}
+
+.anime-card .anime-genre {
+  font-size: 0.6rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 1rem;
+  background: rgba(107, 143, 201, 0.1);
+  color: #8a9bb8;
+  border: 1px solid rgba(107, 143, 201, 0.05);
+}
+
+.loading-spinner {
+  text-align: center;
+  color: #6c7b9c;
+  padding: 2rem;
+  font-size: 1.1rem;
+}
+
+/* --- Случайное и топ --- */
+.random-section,
+.top-section {
+  margin: 2.5rem 0 1.5rem;
+}
+
+.random-section h2,
+.top-section h2 {
+  font-size: 1.4rem;
+  color: #ecefff;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.random-section h2 i,
+.top-section h2 i {
+  color: #f5b84a;
+}
+
+.random-card,
+.top-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.random-card img,
+.top-card img {
+  width: 80px;
+  height: 120px;
+  border-radius: 0.8rem;
+  object-fit: cover;
+}
+
+.random-card .info,
+.top-card .info {
+  flex: 1;
+}
+
+.random-card .info h3,
+.top-card .info h3 {
+  color: #ecefff;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.random-card .info p,
+.top-card .info p {
+  color: #8a9bb8;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0.3rem 0;
+}
+
+.random-card .info .meta,
+.top-card .info .meta {
+  color: #a4b3d1;
+  font-size: 0.8rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.top-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.top-list .top-card {
+  margin: 0;
+}
+
+/* --- Загрузка ещё --- */
+#loadMoreBtn {
+  padding: 0.6rem 2rem;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #a4b3d1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+#loadMoreBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ecefff;
+}
+
+/* --- Адаптив --- */
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-group {
+    justify-content: center;
+  }
+  
+  .anime-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .random-card,
+  .top-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .random-card img,
+  .top-card img {
+    width: 120px;
+    height: 180px;
+  }
+  
+  .top-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 400px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .anime-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+}
