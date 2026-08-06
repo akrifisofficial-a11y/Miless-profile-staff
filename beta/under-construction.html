@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>В разработке — Miless</title>
+  <link rel="stylesheet" href="construction.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="twinkling" aria-hidden="true"></div>
+  
+  <!-- Анимированные частицы -->
+  <div class="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <div class="container">
+    <div class="glow-ring"></div>
+    
+    <!-- Иконка-шестерёнка (анимированная) -->
+    <div class="icon-wrapper">
+      <i class="fas fa-cogs"></i>
+    </div>
+
+    <!-- Заголовок с печатным эффектом -->
+    <h1 id="typingTitle">Страница в разработке</h1>
+    
+    <p class="subtitle">
+      <i class="fas fa-code"></i> 
+      Мы работаем над этой функцией
+    </p>
+
+    <!-- Таймер / Счётчик -->
+    <div class="progress-wrapper">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text" id="progressText">0%</div>
+    </div>
+
+    <!-- Статус-сообщение -->
+    <div class="message-box">
+      <div class="message-icon">🔧</div>
+      <div class="message-content">
+        <div class="message-title">Скоро здесь будет крутая фича!</div>
+        <div class="message-desc">
+          Мы уже работаем над этим. А пока ты можешь:
+        </div>
+        <div class="message-list">
+          <span><i class="fas fa-check"></i> Вернуться на главную</span>
+          <span><i class="fas fa-check"></i> Посмотреть аниме-лист</span>
+          <span><i class="fas fa-check"></i> Написать в соцсетях</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Кнопки навигации -->
+    <div class="nav-buttons">
+      <a href="index.html" class="nav-btn primary">
+        <i class="fas fa-home"></i> На главную
+      </a>
+      <a href="shikimori.html" class="nav-btn secondary">
+        <i class="fas fa-anchor"></i> Shikimori
+      </a>
+      <button class="nav-btn secondary" onclick="showRandomMessage()">
+        <i class="fas fa-lightbulb"></i> Удиви меня
+      </button>
+    </div>
+
+    <!-- Случайное сообщение -->
+    <div id="randomMessage" class="random-message" style="display: none;">
+      <i class="fas fa-star"></i>
+      <span id="messageText">Аниме — это жизнь!</span>
+    </div>
+
+    <footer>
+      <p>🌙 Miless • 2026 • Сделано с ❤️</p>
+    </footer>
+  </div>
+
+  <script src="construction.js"></script>
+</body>
+            </html>
