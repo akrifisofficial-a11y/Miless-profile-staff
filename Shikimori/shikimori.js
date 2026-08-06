@@ -232,7 +232,7 @@
   function createAnimeCard(item) {
     const anime = item.anime;
     const statusMap = {
-      'planned': '📅 В планах',
+      'planned': '📅 Запланировано',
       'watching': '⏳ Смотрю',
       'completed': '✅ Просмотрено',
       'on_hold': '⏸ Отложено',
