@@ -1,4 +1,146 @@
-/* shikimori.css — Стили для страницы Shikimori */
+/* shikimori.css — Лунная версия */
+
+/* --- Лунный фон --- */
+.moon-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(ellipse at 80% 20%, rgba(100, 150, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(150, 100, 255, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- Луна --- */
+.moon {
+  position: fixed;
+  top: 60px;
+  right: 60px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #f0e6d0, #e0d0b8);
+  box-shadow: 
+    0 0 40px rgba(255, 235, 200, 0.1),
+    0 0 80px rgba(255, 235, 200, 0.05),
+    inset -10px -10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  animation: moonGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes moonGlow {
+  0% { box-shadow: 0 0 40px rgba(255, 235, 200, 0.1), 0 0 80px rgba(255, 235, 200, 0.05); }
+  100% { box-shadow: 0 0 60px rgba(255, 235, 200, 0.2), 0 0 120px rgba(255, 235, 200, 0.1); }
+}
+
+.moon-crater {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(200, 185, 165, 0.3);
+}
+
+.crater1 { width: 15px; height: 12px; top: 20px; left: 25px; transform: rotate(-15deg); }
+.crater2 { width: 10px; height: 8px; top: 40px; left: 50px; transform: rotate(10deg); }
+.crater3 { width: 8px; height: 6px; top: 55px; left: 20px; transform: rotate(25deg); }
+.crater4 { width: 6px; height: 5px; top: 30px; left: 60px; transform: rotate(-5deg); }
+
+.moon-glow {
+  position: absolute;
+  top: -30px;
+  left: -30px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 235, 200, 0.05), transparent 70%);
+  pointer-events: none;
+}
+
+/* --- Адаптив луны --- */
+@media (max-width: 700px) {
+  .moon {
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+  }
+  .moon-glow {
+    width: 90px;
+    height: 90px;
+    top: -20px;
+    left: -20px;
+  }
+  .crater1 { width: 10px; height: 8px; top: 12px; left: 15px; }
+  .crater2 { width: 7px; height: 5px; top: 25px; left: 30px; }
+  .crater3 { width: 5px; height: 4px; top: 35px; left: 12px; }
+  .crater4 { width: 4px; height: 3px; top: 18px; left: 38px; }
+}
+
+@media (max-width: 400px) {
+  .moon {
+    width: 35px;
+    height: 35px;
+    top: 10px;
+    right: 10px;
+  }
+}
+
+/* --- API Статус --- */
+.api-status {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  margin-bottom: 1.5rem;
+  color: #8a9bb8;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.api-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fbbf24;
+  animation: apiPulse 2s infinite;
+  flex-shrink: 0;
+}
+
+.api-dot.success {
+  background: #4ade80;
+  animation: none;
+}
+
+.api-dot.error {
+  background: #f87171;
+  animation: none;
+}
+
+@keyframes apiPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+/* --- Остальные стили (без изменений) --- */
+/* Ниже идут стили из предыдущей версии shikimori.css */
+
+.shikimori-page .container {
+  background: rgba(10, 14, 30, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.page-header h1 {
+  background: linear-gradient(135deg, #f0e6d0, #c8b8a0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
 /* --- Статистика --- */
 .stats-grid {
@@ -20,19 +162,19 @@
 .stat-card:hover {
   transform: translateY(-4px);
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(107, 143, 201, 0.2);
+  border-color: rgba(255, 235, 200, 0.1);
 }
 
 .stat-number {
   font-size: 2.2rem;
   font-weight: 700;
-  color: #ecefff;
+  color: #f0e6d0;
   line-height: 1.2;
 }
 
 .stat-label {
   font-size: 0.8rem;
-  color: #8a9bb8;
+  color: #6c7b9c;
   margin-top: 0.3rem;
 }
 
@@ -61,7 +203,7 @@
   border-radius: 2rem;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  color: #a4b3d1;
+  color: #8a9bb8;
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -70,20 +212,20 @@
 
 .filter-btn:hover {
   background: rgba(255, 255, 255, 0.08);
-  color: #ecefff;
+  color: #f0e6d0;
 }
 
 .filter-btn.active {
-  background: rgba(107, 143, 201, 0.15);
-  border-color: rgba(107, 143, 201, 0.3);
-  color: #ecefff;
+  background: rgba(255, 235, 200, 0.1);
+  border-color: rgba(255, 235, 200, 0.2);
+  color: #f0e6d0;
 }
 
 .sort-group {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #a4b3d1;
+  color: #8a9bb8;
   font-size: 0.9rem;
 }
 
@@ -121,12 +263,12 @@
 
 .search-group input:focus {
   outline: none;
-  border-color: rgba(107, 143, 201, 0.3);
+  border-color: rgba(255, 235, 200, 0.2);
   background: rgba(255, 255, 255, 0.06);
 }
 
 .search-group input::placeholder {
-  color: #6c7b9c;
+  color: #4a5a7a;
 }
 
 /* --- Аниме-грид --- */
@@ -153,7 +295,7 @@
 .anime-card:hover {
   transform: translateY(-4px);
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(107, 143, 201, 0.2);
+  border-color: rgba(255, 235, 200, 0.1);
 }
 
 .anime-card .anime-poster {
@@ -166,7 +308,7 @@
 
 .anime-card .anime-title {
   font-size: 0.9rem;
-  color: #ecefff;
+  color: #f0e6d0;
   font-weight: 500;
   margin-top: 0.3rem;
   line-height: 1.2;
@@ -188,7 +330,7 @@
 
 .anime-card .anime-episodes {
   font-size: 0.75rem;
-  color: #6c7b9c;
+  color: #4a5a7a;
 }
 
 .anime-card .anime-genres {
@@ -203,14 +345,14 @@
   font-size: 0.6rem;
   padding: 0.1rem 0.5rem;
   border-radius: 1rem;
-  background: rgba(107, 143, 201, 0.1);
-  color: #8a9bb8;
-  border: 1px solid rgba(107, 143, 201, 0.05);
+  background: rgba(255, 235, 200, 0.05);
+  color: #6c7b9c;
+  border: 1px solid rgba(255, 235, 200, 0.05);
 }
 
 .loading-spinner {
   text-align: center;
-  color: #6c7b9c;
+  color: #4a5a7a;
   padding: 2rem;
   font-size: 1.1rem;
 }
@@ -224,7 +366,7 @@
 .random-section h2,
 .top-section h2 {
   font-size: 1.4rem;
-  color: #ecefff;
+  color: #f0e6d0;
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -262,14 +404,14 @@
 
 .random-card .info h3,
 .top-card .info h3 {
-  color: #ecefff;
+  color: #f0e6d0;
   font-size: 1.1rem;
   margin-bottom: 0.3rem;
 }
 
 .random-card .info p,
 .top-card .info p {
-  color: #8a9bb8;
+  color: #6c7b9c;
   font-size: 0.85rem;
   line-height: 1.5;
   margin: 0.3rem 0;
@@ -277,7 +419,7 @@
 
 .random-card .info .meta,
 .top-card .info .meta {
-  color: #a4b3d1;
+  color: #8a9bb8;
   font-size: 0.8rem;
   display: flex;
   gap: 1rem;
@@ -295,22 +437,67 @@
   margin: 0;
 }
 
-/* --- Загрузка ещё --- */
-#loadMoreBtn {
+/* --- Кнопка загрузки --- */
+.extra-btn {
   padding: 0.6rem 2rem;
   border-radius: 2rem;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  color: #a4b3d1;
+  color: #8a9bb8;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: inherit;
   font-size: 0.9rem;
 }
 
-#loadMoreBtn:hover {
+.extra-btn:hover {
   background: rgba(255, 255, 255, 0.08);
-  color: #ecefff;
+  color: #f0e6d0;
+}
+
+/* --- Навигация --- */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #8a9bb8;
+  text-decoration: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f0e6d0;
+  transform: translateX(-4px);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.page-header .subtitle {
+  color: #6c7b9c;
+  font-size: 1.05rem;
 }
 
 /* --- Адаптив --- */
@@ -352,6 +539,20 @@
   .top-list {
     grid-template-columns: 1fr;
   }
+  
+  .top-nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .back-btn {
+    justify-content: center;
+  }
+  
+  .api-status {
+    font-size: 0.8rem;
+    padding: 0.4rem 1rem;
+  }
 }
 
 @media (max-width: 400px) {
@@ -362,5 +563,9 @@
   .anime-grid {
     grid-template-columns: 1fr 1fr;
     gap: 0.8rem;
+  }
+  
+  .page-header h1 {
+    font-size: 1.8rem;
   }
 }
