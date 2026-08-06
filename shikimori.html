@@ -3,29 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Miless — Shikimori(разработка)</title>
+  <title>🌙 Shikimori — Miless</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="shikimori.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
+  <!-- Лунный фон -->
+  <div class="moon-bg"></div>
   <div class="stars" aria-hidden="true"></div>
   <div class="twinkling" aria-hidden="true"></div>
+  
+  <!-- Луна -->
+  <div class="moon">
+    <div class="moon-crater crater1"></div>
+    <div class="moon-crater crater2"></div>
+    <div class="moon-crater crater3"></div>
+    <div class="moon-crater crater4"></div>
+    <div class="moon-glow"></div>
+  </div>
 
   <div class="container shikimori-page">
     <div class="glow-ring"></div>
 
-    <!-- Навигация назад -->
+    <!-- Навигация -->
     <nav class="top-nav">
       <a href="index.html" class="back-btn">
         <i class="fas fa-arrow-left"></i> На главную
+      </a>
+      <a href="under-construction.html" class="back-btn">
+        <i class="fas fa-wrench"></i> В разработке
       </a>
     </nav>
 
     <!-- Заголовок -->
     <div class="page-header">
-      <h1><i class="fas fa-anchor"></i> Shikimori профиль</h1>
-      <p class="subtitle">Твой аниме-лист в одном месте</p>
+      <h1><i class="fas fa-moon"></i> Shikimori профиль</h1>
+      <p class="subtitle">Мой аниме-лист под лунным светом</p>
+    </div>
+
+    <!-- API Статус -->
+    <div class="api-status" id="apiStatus">
+      <div class="api-dot" id="apiDot"></div>
+      <span id="apiText">Проверка API Shikimori...</span>
+      <span id="apiCount" style="margin-left: auto; font-size: 0.8rem; color: #6c7b9c;"></span>
     </div>
 
     <!-- Статистика -->
@@ -56,7 +77,7 @@
       </div>
     </div>
 
-    <!-- Фильтры и сортировка -->
+    <!-- Контролы -->
     <div class="controls">
       <div class="filter-group">
         <button class="filter-btn active" data-status="all">Все</button>
@@ -84,10 +105,8 @@
 
     <!-- Список аниме -->
     <div id="animeListContainer">
-      <div class="loading-spinner">⏳ Загрузка аниме...</div>
-      <div id="animeGrid" class="anime-grid">
-        <!-- Тут будут карточки -->
-      </div>
+      <div class="loading-spinner">🌙 Загрузка аниме...</div>
+      <div id="animeGrid" class="anime-grid"></div>
       <div id="loadMoreContainer" style="display: none; text-align: center; margin-top: 2rem;">
         <button id="loadMoreBtn" class="extra-btn">Загрузить ещё</button>
       </div>
@@ -97,20 +116,20 @@
     <div class="random-section">
       <h2><i class="fas fa-dice"></i> Случайное аниме дня</h2>
       <div id="randomAnime">
-        <div class="loading-spinner">⏳ Загрузка...</div>
+        <div class="loading-spinner">🌙 Загрузка...</div>
       </div>
     </div>
 
-    <!-- Топ-5 по оценкам -->
+    <!-- Топ-5 -->
     <div class="top-section">
-      <h2><i class="fas fa-trophy"></i> Топ-5 по твоим оценкам</h2>
+      <h2><i class="fas fa-trophy"></i> Топ-5 по оценкам</h2>
       <div id="topAnime">
-        <div class="loading-spinner">⏳ Загрузка...</div>
+        <div class="loading-spinner">🌙 Загрузка...</div>
       </div>
     </div>
 
     <footer>
-      <p>🌙 Miless • 2026 • Сделано с ❤️ для сообщества Shikimori</p>
+      <p>🌙 Miless • 2026 • Сделано с ❤️ под луной</p>
     </footer>
   </div>
 
