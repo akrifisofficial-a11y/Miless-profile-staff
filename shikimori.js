@@ -1,35 +1,27 @@
-// shikimori.js — Полная версия с прямой API интеграцией
+// shikimori.js — Загрузка из JSON-файла
 
 (function() {
   'use strict';
 
   // --- КОНФИГУРАЦИЯ ---
   const CONFIG = {
-    // 👇👇👇 ТВОЙ НИК НА SHIKIMORI 👇👇👇
-    username: 'Miless', // ← ЗАМЕНИ НА СВОЙ НИК!
-    // 👆👆👆 ТВОЙ НИК НА SHIKIMORI 👆👆👆
+    // 👇👇👇 ПУТЬ К JSON-ФАЙЛУ 👇👇👇
+    jsonFile: 'anime_rates.json',
+    // 👆👆👆 ПУТЬ К JSON-ФАЙЛУ 👆👆👆
     
-    // Прямой API URL (с твоим ником)
-    apiUrl: `https://shikimori.io/api/users/Miless/anime_rates?limit=9999`,
-    // Альтернативный API (если .io не работает)
-    fallbackApiUrl: `https://shikimori.one/api/users/Miless/anime_rates?limit=9999`,
-    proxyUrl: 'https://api.allorigins.win/raw?url=',
-    perPage: 50,
-    maxPages: 10
+    // Для обновления с API (запасной вариант)
+    apiUrl: 'https://shikimori.io/api/users/Miless/anime_rates?limit=9999',
+    proxyUrl: 'https://api.allorigins.win/raw?url='
   };
 
   // --- СОСТОЯНИЕ ---
   const state = {
     allAnime: [],
     filteredAnime: [],
-    currentPage: 1,
-    totalPages: 0,
     currentFilter: 'all',
     currentSort: 'score-desc',
     searchQuery: '',
-    isLoading: false,
-    apiWorking: false,
-    apiMethod: 'direct' // 'direct' или 'proxy'
+    isLoading: false
   };
 
   // --- СТАТУСЫ ---
@@ -64,114 +56,34 @@
     apiCount: document.getElementById('apiCount')
   };
 
-  // --- ПРОВЕРКА API ---
-  async function checkAPI() {
-    if (!DOM.apiDot || !DOM.apiText) return;
-    
-    DOM.apiText.textContent = '🔄 Проверка списков Shikimori...';
-    DOM.apiDot.className = 'api-dot';
-    
-    try {
-      // Пробуем прямой API
-      const response = await fetch(CONFIG.apiUrl);
-      
-      if (response.ok) {
-        const data = await response.json();
-        DOM.apiDot.className = 'api-dot success';
-        DOM.apiText.textContent = '✅ API работает!';
-        if (DOM.apiCount) {
-          DOM.apiCount.textContent = `📊 ${data.length} аниме`;
-        }
-        state.apiWorking = true;
-        state.apiMethod = 'direct';
-        console.log(`✅ API Shikimori: ${data.length} аниме`);
-        return true;
-      } else {
-        throw new Error(`HTTP ${response.status}`);
-      }
-    } catch (error) {
-      // Пробуем через прокси
-      DOM.apiDot.className = 'api-dot error';
-      DOM.apiText.textContent = '🔄 Пробуем через прокси...';
-      
-      try {
-        const proxyUrl = `${CONFIG.proxyUrl}${encodeURIComponent(CONFIG.fallbackApiUrl)}`;
-        const response = await fetch(proxyUrl);
-        
-        if (response.ok) {
-          const data = await response.json();
-          DOM.apiDot.className = 'api-dot success';
-          DOM.apiText.textContent = '✅ API через прокси';
-          if (DOM.apiCount) {
-            DOM.apiCount.textContent = `📊 ${data.length} аниме`;
-          }
-          state.apiWorking = true;
-          state.apiMethod = 'proxy';
-          console.log(`✅ API через прокси: ${data.length} аниме`);
-          return true;
-        }
-      } catch (proxyError) {
-        DOM.apiDot.className = 'api-dot error';
-        DOM.apiText.textContent = '⚠️ API недоступен';
-        if (DOM.apiCount) {
-          DOM.apiCount.textContent = '❌ ошибка';
-        }
-        state.apiWorking = false;
-        console.error('❌ Ошибка API:', error.message);
-        return false;
-      }
-    }
-  }
-
-  // --- ЗАГРУЗКА ДАННЫХ ---
-  async function fetchAllAnime() {
+  // --- ЗАГРУЗКА ИЗ JSON-ФАЙЛА ---
+  async function loadFromJSON() {
     if (state.isLoading) return;
     state.isLoading = true;
     
     if (!DOM.grid) return;
-    DOM.grid.innerHTML = '<div class="loading-spinner" style="grid-column:1/-1;">🌙 Загрузка аниме...</div>';
+    DOM.grid.innerHTML = '<div class="loading-spinner">📂 Загрузка из JSON...</div>';
 
     try {
-      const username = CONFIG.username.trim();
+      const response = await fetch(CONFIG.jsonFile);
       
-      if (!username || username === 'Miless') {
-        throw new Error('⚠️ ошибка списков на Shikimori...');
+      if (!response.ok) {
+        throw new Error(`Не удалось загрузить ${CONFIG.jsonFile} (статус: ${response.status})`);
       }
-
-      let data = null;
-
-      // Если API работает напрямую
-      if (state.apiMethod === 'direct') {
-        try {
-          const response = await fetch(CONFIG.apiUrl);
-          if (response.ok) {
-            data = await response.json();
-          }
-        } catch (e) {
-          console.warn('⚠️ Прямой запрос не удался:', e.message);
-        }
-      }
-
-      // Если прямой не сработал или API через прокси
+      
+      const data = await response.json();
+      
       if (!data || data.length === 0) {
-        try {
-          const proxyUrl = `${CONFIG.proxyUrl}${encodeURIComponent(CONFIG.fallbackApiUrl)}`;
-          const response = await fetch(proxyUrl);
-          if (response.ok) {
-            data = await response.json();
-            state.apiMethod = 'proxy';
-          }
-        } catch (e) {
-          console.warn('⚠️ Прокси запрос не удался:', e.message);
-        }
-      }
-
-      if (!data || data.length === 0) {
-        throw new Error('📭 Аниме не найдены. Проверь ник или добавь аниме в список');
+        throw new Error('📭 JSON-файл пуст. Проверь файл anime_rates');
       }
 
       state.allAnime = data;
-      console.log(`✅ Загружено ${state.allAnime.length} аниме (${state.apiMethod})`);
+      
+      console.log(`✅ Загружено ${state.allAnime.length} аниме из JSON`);
+      
+      if (DOM.apiDot) DOM.apiDot.className = 'api-dot success';
+      if (DOM.apiText) DOM.apiText.textContent = '📂 Загружено из JSON';
+      if (DOM.apiCount) DOM.apiCount.textContent = `📊 ${data.length} аниме`;
       
       updateStats(state.allAnime);
       showRandomAnime(state.allAnime);
@@ -179,17 +91,18 @@
       applyFilters();
 
     } catch (error) {
-      console.error('❌ Ошибка:', error);
+      console.error('❌ Ошибка загрузки JSON:', error);
+      if (DOM.apiDot) DOM.apiDot.className = 'api-dot error';
+      if (DOM.apiText) DOM.apiText.textContent = '⚠️ Ошибка JSON';
+      
       if (DOM.grid) {
         DOM.grid.innerHTML = `
           <div class="loading-spinner" style="grid-column:1/-1; color:#f87171;">
-            ${error.message}
+            ❌ ${error.message}
             <br>
             <span style="font-size:0.8rem; color:#4a5a7a; display:block; margin-top:0.8rem;">
-              💡 Ник: "${CONFIG.username}"<br>
-              Проверь на <a href="https://shikimori.io/users/${CONFIG.username}" target="_blank" style="color:#f0e6d0;">
-                shikimori.io/users/${CONFIG.username}
-              </a>
+              💡 Проверь, что файл <strong>${CONFIG.jsonFile}</strong> существует<br>
+              и содержит корректные данные.
             </span>
           </div>
         `;
@@ -199,7 +112,54 @@
     state.isLoading = false;
   }
 
-  // --- СТАТИСТИКА ---
+  // --- ЗАГРУЗКА С API (обновление данных) ---
+  async function updateFromAPI() {
+    if (state.isLoading) return;
+    state.isLoading = true;
+    
+    if (!DOM.grid) return;
+    DOM.grid.innerHTML = '<div class="loading-spinner">🌐 Загрузка с API...</div>';
+
+    try {
+      const url = `${CONFIG.proxyUrl}${encodeURIComponent(CONFIG.apiUrl)}`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (!data || data.length === 0) {
+        throw new Error('📭 Аниме не найдены');
+      }
+
+      state.allAnime = data;
+      
+      console.log(`✅ Загружено ${state.allAnime.length} аниме с API`);
+      
+      if (DOM.apiDot) DOM.apiDot.className = 'api-dot success';
+      if (DOM.apiText) DOM.apiText.textContent = '🌐 Загружено с API';
+      if (DOM.apiCount) DOM.apiCount.textContent = `📊 ${data.length} аниме`;
+      
+      updateStats(state.allAnime);
+      showRandomAnime(state.allAnime);
+      showTopAnime(state.allAnime);
+      applyFilters();
+
+    } catch (error) {
+      console.error('❌ Ошибка API:', error);
+      if (DOM.apiDot) DOM.apiDot.className = 'api-dot error';
+      if (DOM.apiText) DOM.apiText.textContent = '⚠️ Ошибка API';
+      
+      // Если API не работает — пробуем JSON
+      await loadFromJSON();
+    }
+
+    state.isLoading = false;
+  }
+
+  // --- ОСТАЛЬНЫЕ ФУНКЦИИ ---
   function updateStats(data) {
     if (!data) return;
     
@@ -221,7 +181,6 @@
     if (DOM.stats.totalEpisodes) DOM.stats.totalEpisodes.textContent = totalEpisodes;
   }
 
-  // --- ФИЛЬТРЫ И СОРТИРОВКА ---
   function applyFilters() {
     let filtered = [...state.allAnime];
 
@@ -251,7 +210,6 @@
     renderAnimeList(filtered);
   }
 
-  // --- ОТРИСОВКА ---
   function renderAnimeList(data) {
     const grid = DOM.grid;
     if (!grid) return;
@@ -262,14 +220,10 @@
     }
 
     const displayData = data.slice(0, 20);
-    state.currentPage = 1;
-
     grid.innerHTML = displayData.map(item => createAnimeCard(item)).join('');
 
-    if (data.length > 20) {
-      if (DOM.loadMore) DOM.loadMore.style.display = 'block';
-    } else {
-      if (DOM.loadMore) DOM.loadMore.style.display = 'none';
+    if (DOM.loadMore) {
+      DOM.loadMore.style.display = data.length > 20 ? 'block' : 'none';
     }
   }
 
@@ -295,28 +249,6 @@
     `;
   }
 
-  // --- ЗАГРУЗКА ЕЩЁ ---
-  function loadMore() {
-    const data = state.filteredAnime;
-    const currentCount = DOM.grid ? DOM.grid.children.length : 0;
-    const nextBatch = data.slice(currentCount, currentCount + 20);
-
-    if (nextBatch.length > 0) {
-      if (DOM.grid) {
-        nextBatch.forEach(item => {
-          DOM.grid.innerHTML += createAnimeCard(item);
-        });
-      }
-
-      if (currentCount + 20 >= data.length) {
-        if (DOM.loadMore) DOM.loadMore.style.display = 'none';
-      }
-    } else {
-      if (DOM.loadMore) DOM.loadMore.style.display = 'none';
-    }
-  }
-
-  // --- ПОСТЕР ---
   function getAnimePoster(anime, isFallback = false) {
     if (!isFallback && anime.image && anime.image.preview) {
       return anime.image.preview;
@@ -330,7 +262,6 @@
     return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='300'%3E%3Crect fill='%231a1f2e' width='200' height='300'/%3E%3Ccircle cx='100' cy='120' r='50' fill='${color.replace('#', '%23')}' opacity='0.15'/%3E%3Ctext x='100' y='140' text-anchor='middle' dy='.3em' fill='${color.replace('#', '%23')}' font-size='56' font-family='sans-serif' font-weight='bold'%3E${firstChar}%3C/text%3E%3C/svg%3E`;
   }
 
-  // --- СЛУЧАЙНОЕ АНИМЕ ---
   function showRandomAnime(data) {
     const container = DOM.random;
     if (!container) return;
@@ -364,7 +295,6 @@
     `;
   }
 
-  // --- ТОП-5 ПО ОЦЕНКАМ ---
   function showTopAnime(data) {
     const container = DOM.top;
     if (!container) return;
@@ -408,17 +338,33 @@
     `;
   }
 
+  function loadMore() {
+    const data = state.filteredAnime;
+    const currentCount = DOM.grid ? DOM.grid.children.length : 0;
+    const nextBatch = data.slice(currentCount, currentCount + 20);
+
+    if (nextBatch.length > 0) {
+      if (DOM.grid) {
+        nextBatch.forEach(item => {
+          DOM.grid.innerHTML += createAnimeCard(item);
+        });
+      }
+
+      if (currentCount + 20 >= data.length) {
+        if (DOM.loadMore) DOM.loadMore.style.display = 'none';
+      }
+    } else {
+      if (DOM.loadMore) DOM.loadMore.style.display = 'none';
+    }
+  }
+
   // --- ИНИЦИАЛИЗАЦИЯ ---
-  async function init() {
+  function init() {
     console.log('🌙 Shikimori страница загружена');
-    console.log('📡 API URL:', CONFIG.apiUrl);
-    console.log('👤 Ник:', CONFIG.username);
+    console.log('📂 Загрузка из:', CONFIG.jsonFile);
     
-    // Проверяем API
-    await checkAPI();
-    
-    // Загружаем аниме
-    await fetchAllAnime();
+    // Загружаем из JSON
+    loadFromJSON();
 
     // Навешиваем события
     DOM.filterBtns.forEach(btn => {
@@ -449,17 +395,12 @@
     }
 
     console.log('🌙 shikimori.js загружен!');
-    console.log('💡 Команды: window.refreshShikimori() — обновить список');
   }
 
-  // --- ЗАПУСК ---
   document.addEventListener('DOMContentLoaded', init);
 
   // Экспорт для консоли
-  window.refreshShikimori = fetchAllAnime;
-  window.checkAPI = checkAPI;
-  window.reloadShikimori = function() {
-    checkAPI().then(() => fetchAllAnime());
-  };
+  window.refreshJSON = loadFromJSON;
+  window.updateFromAPI = updateFromAPI;
 
 })();
