@@ -9,7 +9,7 @@
     username: 'Miless', // ← ЗАМЕНИ НА СВОЙ НИК!
     // 👆👆👆 ТВОЙ НИК НА SHIKIMORI 👆👆👆
     
-    apiUrl: 'https://shikimori.one/api/users',
+    apiUrl: 'https://shikimori.io/api/users',
     proxyUrl: 'https://api.allorigins.win/raw?url=',
     perPage: 50,
     maxPages: 10 // Максимум страниц для загрузки
