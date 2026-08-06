@@ -6,7 +6,7 @@
   // --- КОНФИГУРАЦИЯ ---
   const CONFIG = {
     // 👇👇👇 ПУТЬ К JSON-ФАЙЛУ 👇👇👇
-    jsonFile: 'anime_rates.json',
+    jsonFile: 'https://raw.githubusercontent.com/akrifisofficial-a11y/Miless-profile-staff/069b2fd75815fcb096e6cd7ff04496308d18fd71/anime_rates.json',
     // 👆👆👆 ПУТЬ К JSON-ФАЙЛУ 👆👆👆
     
     // Для обновления с API (запасной вариант)
