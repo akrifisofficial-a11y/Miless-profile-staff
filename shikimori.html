@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🌙 Shikimori — Miless</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="shikimori.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/shikimori.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
@@ -39,13 +39,13 @@
     <!-- Заголовок -->
     <div class="page-header">
       <h1><i class="fas fa-moon"></i> Shikimori профиль</h1>
-      <p class="subtitle">Мой аниме-лист под лунным светом</p>
+      <p class="subtitle">Твой аниме-лист под лунным светом</p>
     </div>
 
     <!-- API Статус -->
     <div class="api-status" id="apiStatus">
       <div class="api-dot" id="apiDot"></div>
-      <span id="apiText">Проверка API Shikimori...</span>
+      <span id="apiText">Загрузка...</span>
       <span id="apiCount" style="margin-left: auto; font-size: 0.8rem; color: #6c7b9c;"></span>
     </div>
 
@@ -103,6 +103,16 @@
       </div>
     </div>
 
+    <!-- Кнопки обновления -->
+    <div class="update-buttons">
+      <button onclick="window.loadFromGitHub()" class="extra-btn">
+        <i class="fas fa-sync"></i> Обновить с GitHub
+      </button>
+      <button onclick="window.loadFromAPI()" class="extra-btn">
+        <i class="fas fa-cloud-download-alt"></i> Обновить с Shikimori
+      </button>
+    </div>
+
     <!-- Список аниме -->
     <div id="animeListContainer">
       <div class="loading-spinner">🌙 Загрузка аниме...</div>
@@ -133,6 +143,6 @@
     </footer>
   </div>
 
-  <script src="shikimori.js"></script>
+  <script src="js/shikimori.js"></script>
 </body>
-</html>
+        </html>
