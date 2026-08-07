@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌙 Загрузка на GitHub — Miless</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/upload.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="twinkling" aria-hidden="true"></div>
+
+  <div class="container upload-page">
+    <div class="glow-ring"></div>
+
+    <!-- Навигация -->
+    <nav class="top-nav">
+      <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> На главную
+      </a>
+      <a href="shikimori.html" class="back-btn">
+        <i class="fas fa-anchor"></i> Shikimori
+      </a>
+    </nav>
+
+    <!-- Заголовок -->
+    <div class="page-header">
+      <h1><i class="fas fa-cloud-upload-alt"></i> Загрузка на GitHub</h1>
+      <p class="subtitle">Обнови список аниме в репозитории</p>
+    </div>
+
+    <!-- Шаг 1: Скачать с Shikimori -->
+    <div class="step-card">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Скачай свежий список с Shikimori</h3>
+        <p>Нажми на кнопку ниже, чтобы скачать актуальный список аниме</p>
+        <a href="https://shikimori.one/api/users/1361053/anime_rates?limit=9999" target="_blank" class="download-btn" download="anime_rates.json">
+          <i class="fas fa-download"></i> Скачать JSON
+        </a>
+      </div>
+    </div>
+
+    <!-- Шаг 2: Загрузить на GitHub -->
+    <div class="step-card highlight">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Загрузи файл на GitHub</h3>
+        <p>Выбери скачанный файл и нажми "Загрузить"</p>
+        
+        <!-- Форма загрузки -->
+        <div class="upload-form">
+          <div class="file-drop-zone" id="dropZone">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Перетащи файл сюда или нажми для выбора</p>
+            <input type="file" id="fileInput" accept=".json" />
+            <span class="file-name" id="fileName">Файл не выбран</span>
+          </div>
+          
+          <div class="upload-options">
+            <div class="option-group">
+              <label>Токен GitHub:</label>
+              <input type="password" id="githubToken" placeholder="Вставь GitHub Personal Access Token" />
+              <span class="hint">Токен нужен для загрузки файла</span>
+            </div>
+            <div class="option-group">
+              <label>Путь в репозитории:</label>
+              <input type="text" id="filePath" value="anime_rates.json" />
+            </div>
+          </div>
+
+          <button id="uploadBtn" class="upload-btn" disabled>
+            <i class="fas fa-upload"></i> Загрузить на GitHub
+          </button>
+
+          <div id="uploadStatus" class="upload-status" style="display: none;">
+            <div class="status-message"></div>
+          </div>
+        </div>
+
+        <div class="step-hint">
+          <i class="fas fa-info-circle"></i>
+          <span>Файл загрузится в репозиторий <strong>akrifisofficial-a11y/Miless-profile-staff</strong></span>
+        </div>
+        <div class="step-hint warning">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Токен GitHub хранится только в твоём браузере и никуда не отправляется</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Шаг 3: Проверить -->
+    <div class="step-card">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Проверь обновление</h3>
+        <p>Вернись на страницу Shikimori и нажми <strong>"Обновить с GitHub"</strong></p>
+        <a href="shikimori.html" class="check-btn">
+          <i class="fas fa-check-circle"></i> Проверить на Shikimori
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      <p>🌙 Miless • 2026 • Сделано с ❤️ под луной</p>
+    </footer>
+  </div>
+
+  <script src="js/upload.js"></script>
+</body>
+</html>
