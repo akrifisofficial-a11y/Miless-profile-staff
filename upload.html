@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌙 Загрузка JSON — Miless</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* --- СТИЛИ ПРЯМО В HTML (для гарантии) --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: radial-gradient(ellipse at bottom, #0d1120 0%, #03050b 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    /* --- Звёзды --- */
+    .stars, .twinkling {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .stars {
+      background: transparent url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="300"%3E%3Ccircle cx="30" cy="30" r="1.5" fill="%23ffffff" opacity="0.8"/%3E%3Ccircle cx="90" cy="70" r="1" fill="%23ffffff" opacity="0.6"/%3E%3Ccircle cx="150" cy="120" r="2" fill="%23ffffff" opacity="0.9"/%3E%3Ccircle cx="220" cy="50" r="1.2" fill="%23ffffff" opacity="0.7"/%3E%3Ccircle cx="270" cy="180" r="1.8" fill="%23ffffff" opacity="0.5"/%3E%3Ccircle cx="50" cy="200" r="1.3" fill="%23ffffff" opacity="0.8"/%3E%3Ccircle cx="180" cy="250" r="1" fill="%23ffffff" opacity="0.6"/%3E%3Ccircle cx="280" cy="260" r="1.7" fill="%23ffffff" opacity="0.7"/%3E%3Ccircle cx="120" cy="280" r="1.2" fill="%23ffffff" opacity="0.9"/%3E%3Ccircle cx="10" cy="150" r="1.5" fill="%23ffffff" opacity="0.6"/%3E%3C/svg%3E') repeat;
+      background-size: 300px 300px;
+      animation: starMove 60s linear infinite;
+    }
+    .twinkling {
+      background: transparent url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Ccircle cx="40" cy="40" r="2" fill="%23ffffff" opacity="0.3"/%3E%3Ccircle cx="120" cy="80" r="2.5" fill="%23ffffff" opacity="0.2"/%3E%3Ccircle cx="180" cy="30" r="1.8" fill="%23ffffff" opacity="0.4"/%3E%3Ccircle cx="80" cy="160" r="2.2" fill="%23ffffff" opacity="0.25"/%3E%3Ccircle cx="160" cy="180" r="1.5" fill="%23ffffff" opacity="0.35"/%3E%3C/svg%3E') repeat;
+      background-size: 200px 200px;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+    @keyframes starMove { 0% { background-position: 0 0; } 100% { background-position: 300px 300px; } }
+    @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.8; } }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      width: 100%;
+      background: rgba(10, 14, 30, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 3rem;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(120, 140, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .glow-ring {
+      position: absolute;
+      top: -20%;
+      left: -10%;
+      width: 120%;
+      height: 140%;
+      background: radial-gradient(circle at 50% 50%, rgba(100, 150, 255, 0.03), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(40px);
+      z-index: -1;
+    }
+
+    /* --- Навигация --- */
+    .top-nav {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #8a9bb8;
+      text-decoration: none;
+      padding: 0.6rem 1.4rem;
+      border-radius: 2rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+    }
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #f0e6d0;
+    }
+
+    /* --- Заголовок --- */
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .page-header h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #f0e6d0, #c8b8a0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+    .page-header .subtitle {
+      color: #6c7b9c;
+      font-size: 1.05rem;
+    }
+
+    /* --- Шаги --- */
+    .step-card {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 1.5rem;
+      padding: 1.8rem 2rem;
+      margin: 1.5rem 0;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: all 0.3s ease;
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+    .step-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 235, 200, 0.08);
+    }
+    .step-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f5b84a;
+      min-width: 50px;
+      text-align: center;
+      opacity: 0.6;
+    }
+    .step-content {
+      flex: 1;
+    }
+    .step-content h3 {
+      color: #f0e6d0;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .step-content p {
+      color: #8a9bb8;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .download-btn, .check-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.7rem 1.8rem;
+      border-radius: 2rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .download-btn {
+      background: linear-gradient(135deg, #6b8fc9, #5865f2);
+      color: white;
+      box-shadow: 0 4px 20px rgba(88, 101, 242, 0.2);
+    }
+    .download-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(88, 101, 242, 0.3);
+    }
+    .check-btn {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: white;
+      box-shadow: 0 4px 20px rgba(74, 222, 128, 0.2);
+    }
+    .check-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(74, 222, 128, 0.3);
+    }
+
+    .step-hint {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      padding: 0.6rem 1rem;
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      color: #8a9bb8;
+      font-size: 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .step-hint i { color: #6b8fc9; }
+    .step-hint strong { color: #f0e6d0; }
+
+    /* --- Форма загрузки --- */
+    .upload-form {
+      margin: 1.5rem 0;
+    }
+    .file-drop-zone {
+      border: 2px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .file-drop-zone:hover {
+      border-color: rgba(107, 143, 201, 0.3);
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .file-drop-zone.dragover {
+      border-color: #6b8fc9;
+      background: rgba(107, 143, 201, 0.05);
+    }
+    .file-drop-zone i {
+      font-size: 2.5rem;
+      color: #6b8fc9;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .file-drop-zone p {
+      color: #8a9bb8;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+    .file-drop-zone input[type="file"] {
+      display: none;
+    }
+    .file-name {
+      color: #6c7b9c;
+      font-size: 0.85rem;
+    }
+    .file-name.success {
+      color: #4ade80;
+    }
+
+    .upload-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .option-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .option-group label {
+      color: #a4b3d1;
+      font-size: 0.85rem;
+    }
+    .option-group input {
+      padding: 0.6rem 1rem;
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: #d0ddff;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+    .option-group input:focus {
+      outline: none;
+      border-color: rgba(107, 143, 201, 0.3);
+    }
+    .option-group .hint {
+      font-size: 0.75rem;
+      color: #6c7b9c;
+    }
+
+    .upload-btn {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 2rem;
+      background: linear-gradient(135deg, #6b8fc9, #5865f2);
+      color: white;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      margin-top: 0.5rem;
+    }
+    .upload-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(88, 101, 242, 0.3);
+    }
+    .upload-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .upload-status {
+      margin-top: 1rem;
+      padding: 0.8rem 1rem;
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .status-message {
+      font-size: 0.95rem;
+    }
+    .status-message.success { color: #4ade80; }
+    .status-message.error { color: #f87171; }
+    .status-message.info { color: #fbbf24; }
+
+    footer {
+      margin-top: 2rem;
+      color: #4a5a7a;
+      font-size: 0.85rem;
+      text-align: center;
+      opacity: 0.6;
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 1.5rem; }
+      .step-card { flex-direction: column; padding: 1.2rem; }
+      .step-number { text-align: left; min-width: auto; }
+      .upload-options { grid-template-columns: 1fr; }
+      .top-nav { flex-direction: column; }
+      .back-btn { justify-content: center; }
+      .page-header h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="twinkling" aria-hidden="true"></div>
+
+  <div class="container">
+    <div class="glow-ring"></div>
+
+    <nav class="top-nav">
+      <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> На главную
+      </a>
+      <a href="shikimori.html" class="back-btn">
+        <i class="fas fa-anchor"></i> Shikimori
+      </a>
+    </nav>
+
+    <div class="page-header">
+      <h1><i class="fas fa-cloud-upload-alt"></i> Загрузка JSON</h1>
+      <p class="subtitle">Обнови список аниме на GitHub</p>
+    </div>
+
+    <!-- Шаг 1 -->
+    <div class="step-card">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Скачай свежий список с Shikimori</h3>
+        <p>Нажми на кнопку ниже, чтобы скачать актуальный список аниме</p>
+        <a href="https://shikimori.one/api/users/1361053/anime_rates?limit=9999" target="_blank" class="download-btn" download="anime_rates.json">
+          <i class="fas fa-download"></i> Скачать JSON
+        </a>
+        <div class="step-hint">
+          <i class="fas fa-info-circle"></i>
+          <span>Файл скачается как <strong>anime_rates.json</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Шаг 2 -->
+    <div class="step-card" style="border-color: rgba(107, 143, 201, 0.2); background: rgba(107, 143, 201, 0.03);">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Загрузи файл на GitHub</h3>
+        <p>Выбери скачанный файл и нажми "Загрузить"</p>
+        
+        <div class="upload-form">
+          <div class="file-drop-zone" id="dropZone">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Перетащи файл сюда или нажми для выбора</p>
+            <input type="file" id="fileInput" accept=".json" />
+            <span class="file-name" id="fileName">Файл не выбран</span>
+          </div>
+          
+          <div class="upload-options">
+            <div class="option-group">
+              <label>Токен GitHub:</label>
+              <input type="password" id="githubToken" placeholder="Вставь GitHub Personal Access Token" />
+              <span class="hint">Нужен для загрузки (сохранится в браузере)</span>
+            </div>
+            <div class="option-group">
+              <label>Путь в репозитории:</label>
+              <input type="text" id="filePath" value="anime_rates.json" />
+            </div>
+          </div>
+
+          <button id="uploadBtn" class="upload-btn" disabled>
+            <i class="fas fa-upload"></i> Загрузить на GitHub
+          </button>
+
+          <div id="uploadStatus" class="upload-status" style="display: none;">
+            <div class="status-message"></div>
+          </div>
+        </div>
+
+        <div class="step-hint">
+          <i class="fas fa-info-circle"></i>
+          <span>Файл загрузится в репозиторий <strong>akrifisofficial-a11y/Miless-profile-staff</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Шаг 3 -->
+    <div class="step-card">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Проверь обновление</h3>
+        <p>Вернись на страницу Shikimori и нажми <strong>"Обновить с GitHub"</strong></p>
+        <a href="shikimori.html" class="check-btn">
+          <i class="fas fa-check-circle"></i> Проверить на Shikimori
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      <p>🌙 Miless • 2026 • Сделано с ❤️ под луной</p>
+    </footer>
+  </div>
+
+  <script>
+    // --- upload.js (встроен прямо в HTML для гарантии) ---
+    (function() {
+      const CONFIG = {
+        repoOwner: 'akrifisofficial-a11y',
+        repoName: 'Miless-profile-staff',
+        branch: 'main'
+      };
+
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const fileName = document.getElementById('fileName');
+      const uploadBtn = document.getElementById('uploadBtn');
+      const githubToken = document.getElementById('githubToken');
+      const filePath = document.getElementById('filePath');
+      const uploadStatus = document.getElementById('uploadStatus');
+      const statusMessage = uploadStatus.querySelector('.status-message');
+
+      let selectedFile = null;
+
+      function checkToken() {
+        const token = githubToken.value.trim();
+        uploadBtn.disabled = !token || !selectedFile;
+      }
+
+      function handleFile(file) {
+        if (!file) return;
+        if (!file.name.endsWith('.json')) {
+          showStatus('❌ Пожалуйста, выбери JSON-файл', 'error');
+          return;
+        }
+        selectedFile = file;
+        fileName.textContent = `📄 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        fileName.className = 'file-name success';
+        checkToken();
+        showStatus('✅ Файл готов к загрузке', 'success');
+      }
+
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+      });
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+      });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+          handleFile(e.dataTransfer.files[0]);
+        }
+      });
+      dropZone.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          handleFile(e.target.files[0]);
+        }
+      });
+
+      githubToken.addEventListener('input', checkToken);
+
+      // Сохраняем токен
+      const savedToken = localStorage.getItem('github_token');
+      if (savedToken) {
+        githubToken.value = savedToken;
+        checkToken();
+      }
+      githubToken.addEventListener('change', () => {
+        if (githubToken.value.trim()) {
+          localStorage.setItem('github_token', githubToken.value.trim());
+        }
+      });
+
+      uploadBtn.addEventListener('click', async () => {
+        const token = githubToken.value.trim();
+        const path = filePath.value.trim() || 'anime_rates.json';
+
+        if (!token) {
+          showStatus('❌ Вставь GitHub токен', 'error');
+          return;
+        }
+        if (!selectedFile) {
+          showStatus('❌ Выбери файл', 'error');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          const content = event.target.result;
+          const encodedContent = btoa(content);
+
+          uploadBtn.disabled = true;
+          uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
+          showStatus('⏳ Загрузка на GitHub...', 'info');
+
+          try {
+            const getUrl = `https://api.github.com/repos/${CONFIG.repoOwner}/${CONFIG.repoName}/contents/${path}`;
+            let sha = null;
+
+            try {
+              const getResponse = await fetch(getUrl, {
+                headers: { 'Authorization': `token ${token}` }
+              });
+              if (getResponse.ok) {
+                const data = await getResponse.json();
+                sha = data.sha;
+              }
+            } catch (e) {}
+
+            const uploadUrl = `https://api.github.com/repos/${CONFIG.repoOwner}/${CONFIG.repoName}/contents/${path}`;
+            const body = {
+              message: sha ? 'Update anime_rates.json' : 'Add anime_rates.json',
+              content: encodedContent,
+              branch: CONFIG.branch
+            };
+            if (sha) body.sha = sha;
+
+            const response = await fetch(uploadUrl, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.message || 'Ошибка загрузки');
+            }
+
+            showStatus('✅ Файл успешно загружен на GitHub!', 'success');
+            uploadBtn.innerHTML = '<i class="fas fa-check"></i> Загружено!';
+            setTimeout(() => {
+              uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Загрузить на GitHub';
+              uploadBtn.disabled = false;
+            }, 3000);
+
+          } catch (error) {
+            console.error('Ошибка:', error);
+            showStatus(`❌ Ошибка: ${error.message}`, 'error');
+            uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Загрузить на GitHub';
+            uploadBtn.disabled = false;
+          }
+        };
+        reader.readAsText(selectedFile);
+      });
+
+      function showStatus(message, type = 'info') {
+        uploadStatus.style.display = 'block';
+        statusMessage.textContent = message;
+        statusMessage.className = type;
+        const colors = { success: '#4ade80', error: '#f87171', info: '#fbbf24' };
+        statusMessage.style.color = colors[type] || '#fbbf24';
+      }
+    })();
+  </script>
+</body>
+</html>
