@@ -1,4 +1,4 @@
-/* shikimori.css — Лунная версия */
+/* shikimori.css — Лунная версия с улучшенными стилями */
 
 /* --- Лунный фон --- */
 .moon-bg {
@@ -126,15 +126,14 @@
   50% { opacity: 0.5; transform: scale(1.2); }
 }
 
-/* --- Остальные стили (без изменений) --- */
-/* Ниже идут стили из предыдущей версии shikimori.css */
-
+/* --- Контейнер --- */
 .shikimori-page .container {
   background: rgba(10, 14, 30, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
+/* --- Заголовок --- */
 .page-header h1 {
   background: linear-gradient(135deg, #f0e6d0, #c8b8a0);
   -webkit-background-clip: text;
@@ -157,6 +156,7 @@
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.04);
   transition: all 0.3s ease;
+  cursor: default;
 }
 
 .stat-card:hover {
@@ -269,6 +269,36 @@
 
 .search-group input::placeholder {
   color: #4a5a7a;
+}
+
+/* --- Кнопки обновления --- */
+.update-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 0 0 2rem;
+  flex-wrap: wrap;
+}
+
+.update-buttons .extra-btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #8a9bb8;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.update-buttons .extra-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f0e6d0;
+  transform: translateY(-2px);
 }
 
 /* --- Аниме-грид --- */
@@ -395,6 +425,7 @@
   height: 120px;
   border-radius: 0.8rem;
   object-fit: cover;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .random-card .info,
@@ -500,6 +531,16 @@
   font-size: 1.05rem;
 }
 
+/* --- Уведомления --- */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(100px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.notification {
+  animation: slideIn 0.3s ease-out !important;
+}
+
 /* --- Адаптив --- */
 @media (max-width: 600px) {
   .stats-grid {
@@ -552,6 +593,11 @@
   .api-status {
     font-size: 0.8rem;
     padding: 0.4rem 1rem;
+  }
+  
+  .update-buttons {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 
