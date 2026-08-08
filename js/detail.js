@@ -3,8 +3,8 @@
 (function() {
   'use strict';
 
-  const ANIME_URL = 'data/anime_rates.json';
-  const SHIKI_BASE = 'https://shikimori.one';
+  const ANIME_URL = 'anime_rates.json';
+  const SHIKI_BASE = 'https://shikimori.io';
   const TOKEN_KEY = 'shikimori_token';
 
   const container = document.getElementById('detailContent');
