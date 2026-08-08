@@ -5,7 +5,7 @@
 
   const CONFIG = {
     githubJsonUrl: 'https://raw.githubusercontent.com/akrifisofficial-a11y/Miless-profile-staff/main/anime_rates.json',
-    shikimoriBaseUrl: 'https://shikimori.one'
+    shikimoriBaseUrl: 'https://shikimori.io'
   };
 
   const state = {
