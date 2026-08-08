@@ -1,15 +1,14 @@
-// auth.js — OAuth через Shikimori (переподключение)
+// auth.js — OAuth через Shikimori
 
 (function() {
   'use strict';
 
   const AUTH_CONFIG = {
-    // ⬇️ ВСТАВЬ СВОИ ДАННЫЕ ⬇️
-    clientId: 'aYGOHBKdDGqSHtQhkdUo6abk5Apsso2pNlsxD88uhcE',          // из настроек приложения
-    clientSecret: 'ibUUh_pjwhMFqAAceg2ceKcZTZX8n1loCk4tT_sEtxc',  // из настроек приложения
-    redirectUri: window.location.origin + '/callback.html', // должен совпадать с Redirect URI в приложении
-    authUrl: 'https://shikimori.io/oauth/authorize',  // или .io
-    tokenUrl: 'https://shikimori.io/oauth/token',      // или .io
+    clientId: 'aYGOHBKdDGqSHtQhkdUo6abk5Apsso2pNlsxD88uhcE',
+    clientSecret: 'ibUUh_pjwhMFqAAceg2ceKcZTZX8n1loCk4tT_sEtxc',
+    redirectUri: 'https://milesvv.c6t.ru/callback.html',  // ← жёстко прописанный URL
+    authUrl: 'https://shikimori.one/oauth/authorize',
+    tokenUrl: 'https://shikimori.one/oauth/token',
     scope: 'user_rates'
   };
 
@@ -62,7 +61,7 @@
       if (data.access_token) {
         setToken(data.access_token);
         console.log('✅ Авторизация успешна!');
-        window.location.href = '/';  // или на главную страницу
+        window.location.href = '/';
       } else {
         console.error('❌ Ошибка получения токена:', data);
         alert('Ошибка входа: ' + (data.error_description || 'Неизвестная ошибка'));
