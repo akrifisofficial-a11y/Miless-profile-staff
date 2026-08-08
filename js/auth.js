@@ -1,15 +1,15 @@
-// auth.js — OAuth через Shikimori (исправленная)
+// auth.js — OAuth через Shikimori (переподключение)
 
 (function() {
   'use strict';
 
   const AUTH_CONFIG = {
-    clientId: 'jMfGBBbTakHRGBXBqRDSv9Vv3woMjfvUqjbnOH5QX-A',
-    clientSecret: '7G_Sr1MBdOU8O7GfF6JA6sSaf2KGRMH8nJcIqaP1RJI',
-    redirectUri: window.location.origin + '/callback.html',
-    // ⚠️ Убедись, что здесь правильный домен (где зарегистрировано приложение)
-    authUrl: 'https://shikimori.io/oauth/authorize',
-    tokenUrl: 'https://shikimori.io/oauth/token',
+    // ⬇️ ВСТАВЬ СВОИ ДАННЫЕ ⬇️
+    clientId: 'aYGOHBKdDGqSHtQhkdUo6abk5Apsso2pNlsxD88uhcE',          // из настроек приложения
+    clientSecret: 'ibUUh_pjwhMFqAAceg2ceKcZTZX8n1loCk4tT_sEtxc',  // из настроек приложения
+    redirectUri: window.location.origin + '/callback.html', // должен совпадать с Redirect URI в приложении
+    authUrl: 'https://shikimori.io/oauth/authorize',  // или .io
+    tokenUrl: 'https://shikimori.io/oauth/token',      // или .io
     scope: 'user_rates'
   };
 
@@ -61,8 +61,8 @@
       const data = await response.json();
       if (data.access_token) {
         setToken(data.access_token);
-        console.log('✅ Авторизация успешна! Токен сохранён.');
-        window.location.href = '/';
+        console.log('✅ Авторизация успешна!');
+        window.location.href = '/';  // или на главную страницу
       } else {
         console.error('❌ Ошибка получения токена:', data);
         alert('Ошибка входа: ' + (data.error_description || 'Неизвестная ошибка'));
