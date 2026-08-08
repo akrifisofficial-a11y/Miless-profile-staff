@@ -1,4 +1,4 @@
-// detail.js — Загрузка, редактирование, копирование ссылки и ссылка на Shikimori
+// detail.js — Загрузка, редактирование, копирование ссылки
 
 (function() {
   'use strict';
@@ -11,7 +11,6 @@
   let currentData = null;
   let userRateId = null;
 
-  // --- Вспомогательные функции ---
   function getToken() {
     return localStorage.getItem(TOKEN_KEY);
   }
@@ -37,15 +36,12 @@
     return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='300'%3E%3Crect fill='%231a1f2e' width='200' height='300'/%3E%3Ccircle cx='100' cy='120' r='50' fill='${color.replace('#', '%23')}' opacity='0.15'/%3E%3Ctext x='100' y='140' text-anchor='middle' dy='.3em' fill='${color.replace('#', '%23')}' font-size='56' font-family='sans-serif' font-weight='bold'%3E${char}%3C/text%3E%3C/svg%3E`;
   }
 
-  // --- Копирование ссылки ---
   function copyPageLink() {
     const url = window.location.href;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(url).then(() => {
         showNotification('✅ Ссылка скопирована!', 'success');
-      }).catch(() => {
-        fallbackCopy(url);
-      });
+      }).catch(() => fallbackCopy(url));
     } else {
       fallbackCopy(url);
     }
@@ -67,11 +63,9 @@
     document.body.removeChild(textarea);
   }
 
-  // --- Загрузка данных ---
   async function loadAnime() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
-
     if (!id) {
       container.innerHTML = '<div class="loading-spinner" style="color:#f87171;">❌ Не указан ID аниме</div>';
       return;
@@ -81,13 +75,11 @@
       const resp = await fetch(ANIME_URL);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
-
       const entry = data.find(item => item.id == id);
       if (!entry) {
         container.innerHTML = '<div class="loading-spinner" style="color:#f87171;">❌ Аниме не найдено</div>';
         return;
       }
-
       currentData = entry;
       userRateId = entry.id;
       renderDetail(entry);
@@ -97,7 +89,6 @@
     }
   }
 
-  // --- Отрисовка ---
   function renderDetail(entry) {
     const anime = entry.anime;
     const title = anime.russian || anime.name || 'Без названия';
@@ -121,8 +112,6 @@
     }
 
     const genres = (anime.genres || []).map(g => g.russian || g.name).join(', ');
-
-    // Ссылка на Shikimori
     let shikiUrl = '#';
     if (anime.url) {
       shikiUrl = anime.url.startsWith('http') ? anime.url : SHIKI_BASE + anime.url;
@@ -144,7 +133,6 @@
           ${genres ? `<div class="genres">${genres.split(',').map(g => `<span>${g.trim()}</span>`).join('')}</div>` : ''}
           <div class="description">${desc}</div>
 
-          <!-- Кнопки действий -->
           <div class="action-buttons">
             <button class="action-btn" id="copyLinkBtn">
               <i class="fas fa-copy"></i> Копировать ссылку
@@ -198,10 +186,8 @@
       </div>
     `;
 
-    // --- Обработчик копирования ссылки ---
     document.getElementById('copyLinkBtn').addEventListener('click', copyPageLink);
 
-    // --- Обработчики редактирования ---
     if (isAuth) {
       const toggleBtn = document.getElementById('editToggleBtn');
       const editForm = document.getElementById('editForm');
@@ -228,7 +214,7 @@
     }
   }
 
-  // --- Сохранение изменений ---
+  // --- СОХРАНЕНИЕ ИЗМЕНЕНИЙ (исправлено) ---
   async function saveChanges() {
     const token = getToken();
     if (!token) {
@@ -237,7 +223,7 @@
     }
 
     const status = document.getElementById('editStatus').value;
-    const score = parseInt(document.getElementById('editScore').value);
+    const scoreInput = document.getElementById('editScore').value;
     const text = document.getElementById('editText').value.trim();
 
     const saveBtn = document.getElementById('saveBtn');
@@ -245,11 +231,18 @@
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
 
     try {
+      // Проверяем, что ID существует
+      if (!userRateId) {
+        throw new Error('ID записи не найден');
+      }
+
       const payload = {
         user_rate: {
           status: status
         }
       };
+
+      const score = parseInt(scoreInput);
       if (!isNaN(score) && score >= 1 && score <= 10) {
         payload.user_rate.score = score;
       }
@@ -257,6 +250,9 @@
         payload.user_rate.text = text;
       }
 
+      console.log('🔄 Отправка запроса на Shikimori:', payload);
+
+      // ⚠️ Используем v1 API (более стабильный) или v2 с правильным токеном
       const url = `https://shikimori.one/api/v2/user_rates/${userRateId}`;
       const resp = await fetch(url, {
         method: 'PATCH',
@@ -268,11 +264,19 @@
       });
 
       if (!resp.ok) {
-        const err = await resp.json();
-        throw new Error(err.message || `HTTP ${resp.status}`);
+        const errText = await resp.text();
+        console.error('❌ Ответ сервера:', errText);
+        let errMsg = `HTTP ${resp.status}`;
+        try {
+          const errJson = JSON.parse(errText);
+          if (errJson.errors) errMsg = errJson.errors.join(', ');
+        } catch (e) {}
+        throw new Error(errMsg);
       }
 
       const updated = await resp.json();
+      console.log('✅ Успешно обновлено:', updated);
+
       showNotification('✅ Данные успешно обновлены на Shikimori!', 'success');
 
       // Обновляем локальные данные
@@ -286,7 +290,7 @@
       if (editForm) editForm.classList.add('active');
 
     } catch (error) {
-      console.error('Ошибка сохранения:', error);
+      console.error('❌ Ошибка сохранения:', error);
       showNotification('❌ Ошибка: ' + error.message, 'error');
     }
 
@@ -294,6 +298,5 @@
     saveBtn.innerHTML = '<i class="fas fa-save"></i> Сохранить на Shikimori';
   }
 
-  // --- Запуск ---
   document.addEventListener('DOMContentLoaded', loadAnime);
 })();
