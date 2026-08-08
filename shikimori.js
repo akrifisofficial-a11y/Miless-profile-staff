@@ -1,17 +1,12 @@
-// shikimori.js — Автоматическая загрузка с Shikimori и GitHub
+// shikimori.js — Загрузка из JSON-файла на GitHub + ссылки
 
 (function() {
   'use strict';
 
   // --- КОНФИГУРАЦИЯ ---
   const CONFIG = {
-    // 👇👇👇 НОВАЯ ССЫЛКА С ID 👇👇👇
-    shikimoriApi: 'https://shikimori.io/api/users/1361053/anime_rates?limit=99999',
-    // 👆👆👆 НОВАЯ ССЫЛКА С ID 👆👆👆
-    
-    // Ссылка на GitHub JSON
     githubJsonUrl: 'https://raw.githubusercontent.com/akrifisofficial-a11y/Miless-profile-staff/069b2fd75815fcb096e6cd7ff04496308d18fd71/anime_rates.json',
-    proxyUrl: 'https://api.allorigins.win/raw?url='
+    shikimoriBaseUrl: 'https://shikimori.io'
   };
 
   // --- СОСТОЯНИЕ ---
@@ -21,8 +16,7 @@
     currentFilter: 'all',
     currentSort: 'score-desc',
     searchQuery: '',
-    isLoading: false,
-    dataSource: 'github'
+    isLoading: false
   };
 
   // --- СТАТУСЫ ---
@@ -57,69 +51,27 @@
     apiCount: document.getElementById('apiCount')
   };
 
-  // --- УВЕДОМЛЕНИЯ ---
-  function showNotification(message, type = 'info') {
-    const existing = document.querySelector('.notification');
-    if (existing) existing.remove();
-    
-    const div = document.createElement('div');
-    div.className = `notification ${type}`;
-    div.textContent = message;
-    Object.assign(div.style, {
-      position: 'fixed',
-      top: '20px',
-      right: '20px',
-      padding: '1rem 1.5rem',
-      borderRadius: '1rem',
-      background: 'rgba(10, 14, 30, 0.95)',
-      border: `1px solid ${type === 'success' ? 'rgba(74, 222, 128, 0.3)' : type === 'error' ? 'rgba(248, 113, 113, 0.3)' : 'rgba(255, 255, 255, 0.1)'}`,
-      color: '#ecefff',
-      zIndex: '9999',
-      backdropFilter: 'blur(10px)',
-      maxWidth: '300px',
-      animation: 'slideIn 0.3s ease-out',
-      boxShadow: '0 10px 40px rgba(0,0,0,0.5)'
-    });
-    document.body.appendChild(div);
-    
-    setTimeout(() => {
-      div.style.opacity = '0';
-      div.style.transition = 'opacity 0.5s';
-      setTimeout(() => div.remove(), 500);
-    }, 4000);
-  }
-
-  // --- ПОЛУЧЕНИЕ ПОСТЕРА (ИСПРАВЛЕНО!) ---
+  // --- ПОЛУЧЕНИЕ ПОСТЕРА ---
   function getAnimePoster(anime) {
     if (!anime) return getPlaceholderPoster('?');
     
-    // Пробуем получить постер
     let posterUrl = null;
     
-    // 1. Если есть image.preview
     if (anime.image && anime.image.preview) {
       posterUrl = anime.image.preview;
-    }
-    // 2. Если есть image.original
-    else if (anime.image && anime.image.original) {
+    } else if (anime.image && anime.image.original) {
       posterUrl = anime.image.original;
-    }
-    // 3. Если есть просто image (строка)
-    else if (typeof anime.image === 'string') {
+    } else if (typeof anime.image === 'string') {
       posterUrl = anime.image;
     }
     
-    // Если постер найден — добавляем базовый URL если нужно
     if (posterUrl) {
-      // Если ссылка начинается с / — добавляем домен
       if (posterUrl.startsWith('/')) {
         posterUrl = `https://shikimori.one${posterUrl}`;
       }
-      // Если ссылка уже полная — оставляем
       return posterUrl;
     }
     
-    // Если постера нет — возвращаем заглушку
     return getPlaceholderPoster(anime.russian || anime.name || '?');
   }
 
@@ -153,78 +105,28 @@
       }
 
       state.allAnime = data;
-      state.dataSource = 'github';
       
       console.log(`✅ Загружено ${state.allAnime.length} аниме с GitHub`);
       
       updateUI(data, '📂 GitHub');
       applyFilters();
-      showNotification(`✅ Загружено ${data.length} аниме с GitHub`, 'success');
 
     } catch (error) {
-      console.error('❌ Ошибка GitHub:', error);
-      updateStatus('error', '⚠️ GitHub');
+      console.error('❌ Ошибка:', error);
+      updateStatus('error', '⚠️ Ошибка');
       
       if (DOM.grid) {
         DOM.grid.innerHTML = `
           <div class="loading-spinner" style="grid-column:1/-1; color:#f87171;">
-            ❌ ${error.message}
+            ❌ Не удалось загрузить данные
             <br>
             <span style="font-size:0.8rem; color:#4a5a7a; display:block; margin-top:0.8rem;">
-              💡 Проверь ссылку в CONFIG.githubJsonUrl
+              💡 Проверь файл:<br>
+              <strong>${CONFIG.githubJsonUrl}</strong>
             </span>
           </div>
         `;
       }
-    }
-
-    state.isLoading = false;
-  }
-
-  // --- ЗАГРУЗКА С SHIKIMORI API (НОВАЯ ССЫЛКА) ---
-  async function loadFromAPI() {
-    if (state.isLoading) return;
-    state.isLoading = true;
-    
-    if (!DOM.grid) return;
-    DOM.grid.innerHTML = '<div class="loading-spinner">🌐 Загрузка с Shikimori...</div>';
-
-    try {
-      // Пробуем напрямую
-      let response = await fetch(CONFIG.shikimoriApi);
-      
-      // Если не работает — через прокси
-      if (!response.ok) {
-        const proxyUrl = `${CONFIG.proxyUrl}${encodeURIComponent(CONFIG.shikimoriApi)}`;
-        response = await fetch(proxyUrl);
-      }
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (!data || data.length === 0) {
-        throw new Error('📭 Аниме не найдены');
-      }
-
-      state.allAnime = data;
-      state.dataSource = 'api';
-      
-      console.log(`✅ Загружено ${state.allAnime.length} аниме с API`);
-      
-      updateUI(data, '🌐 Shikimori');
-      applyFilters();
-      
-      showNotification(`✅ Обновлено ${data.length} аниме с Shikimori`, 'success');
-
-    } catch (error) {
-      console.error('❌ Ошибка API:', error);
-      updateStatus('error', '⚠️ API');
-      
-      // Пробуем загрузить с GitHub
-      await loadFromGitHub();
     }
 
     state.isLoading = false;
@@ -308,7 +210,7 @@
     renderAnimeList(filtered);
   }
 
-  // --- ОТРИСОВКА ---
+  // --- ОТРИСОВКА КАРТОЧЕК С ССЫЛКАМИ ---
   function renderAnimeList(data) {
     const grid = DOM.grid;
     if (!grid) return;
@@ -332,19 +234,34 @@
     const score = item.score || '—';
     const episodes = anime.episodes || '?';
     const title = anime.russian || anime.name || 'Без названия';
-    const poster = getAnimePoster(anime); // ← ИСПРАВЛЕНО!
+    const poster = getAnimePoster(anime);
     const genres = (anime.genres || []).slice(0, 3).map(g => g.russian || g.name).join(', ');
+    
+    // Собираем ссылку на страницу аниме на Shikimori
+    let animeUrl = '#';
+    if (anime.url) {
+      if (anime.url.startsWith('http')) {
+        animeUrl = anime.url;
+      } else {
+        animeUrl = `${CONFIG.shikimoriBaseUrl}${anime.url}`;
+      }
+    }
 
     return `
-      <div class="anime-card">
-        <img src="${poster}" alt="${title}" class="anime-poster" loading="lazy" 
-             onerror="this.src='${getPlaceholderPoster(title)}'">
-        <div class="anime-title">${title}</div>
-        <div class="anime-status">${status}</div>
-        ${score !== '—' ? `<div class="anime-score">⭐ ${score}</div>` : ''}
-        <div class="anime-episodes">${episodes} эп.</div>
-        ${genres ? `<div class="anime-genres"><span class="anime-genre">${genres}</span></div>` : ''}
-      </div>
+      <a href="${animeUrl}" target="_blank" class="anime-card-link" title="Открыть на Shikimori">
+        <div class="anime-card">
+          <img src="${poster}" alt="${title}" class="anime-poster" loading="lazy" 
+               onerror="this.src='${getPlaceholderPoster(title)}'">
+          <div class="anime-title">${title}</div>
+          <div class="anime-status">${status}</div>
+          ${score !== '—' ? `<div class="anime-score">⭐ ${score}</div>` : ''}
+          <div class="anime-episodes">${episodes} эп.</div>
+          ${genres ? `<div class="anime-genres"><span class="anime-genre">${genres}</span></div>` : ''}
+          <div class="anime-link-icon">
+            <i class="fas fa-external-link-alt"></i>
+          </div>
+        </div>
+      </a>
     `;
   }
 
@@ -450,8 +367,7 @@
   // --- ИНИЦИАЛИЗАЦИЯ ---
   function init() {
     console.log('🌙 Shikimori страница загружена');
-    console.log('📡 API:', CONFIG.shikimoriApi);
-    console.log('📂 GitHub:', CONFIG.githubJsonUrl);
+    console.log('📂 JSON:', CONFIG.githubJsonUrl);
     
     // Загружаем с GitHub
     loadFromGitHub();
@@ -485,15 +401,11 @@
     }
 
     console.log('🌙 shikimori.js загружен!');
-    console.log('💡 Команды:');
-    console.log('  - window.loadFromGitHub() — обновить с GitHub');
-    console.log('  - window.loadFromAPI() — обновить с Shikimori API');
   }
 
   document.addEventListener('DOMContentLoaded', init);
 
-  // Экспорт для консоли и кнопок
+  // Экспорт для консоли (для отладки)
   window.loadFromGitHub = loadFromGitHub;
-  window.loadFromAPI = loadFromAPI;
 
 })();
