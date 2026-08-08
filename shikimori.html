@@ -9,12 +9,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
-  <!-- Лунный фон -->
   <div class="moon-bg"></div>
   <div class="stars" aria-hidden="true"></div>
   <div class="twinkling" aria-hidden="true"></div>
   
-  <!-- Луна -->
   <div class="moon">
     <div class="moon-crater crater1"></div>
     <div class="moon-crater crater2"></div>
@@ -26,23 +24,18 @@
   <div class="container shikimori-page">
     <div class="glow-ring"></div>
 
-    <!-- Навигация -->
     <nav class="top-nav">
       <a href="index.html" class="back-btn">
         <i class="fas fa-arrow-left"></i> На главную
       </a>
-      <a href="under-construction.html" class="back-btn">
-        <i class="fas fa-wrench"></i> В разработке
-      </a>
     </nav>
 
-    <!-- Заголовок -->
     <div class="page-header">
       <h1><i class="fas fa-moon"></i> Shikimori профиль</h1>
-      <p class="subtitle">Твой аниме-лист под лунным светом</p>
+      <p class="subtitle">Мой аниме-лист под лунным светом</p>
     </div>
 
-    <!-- API Статус -->
+    <!-- Статус загрузки -->
     <div class="api-status" id="apiStatus">
       <div class="api-dot" id="apiDot"></div>
       <span id="apiText">Загрузка...</span>
@@ -77,7 +70,7 @@
       </div>
     </div>
 
-    <!-- Контролы -->
+    <!-- Фильтры и сортировка -->
     <div class="controls">
       <div class="filter-group">
         <button class="filter-btn active" data-status="all">Все</button>
@@ -101,16 +94,6 @@
       <div class="search-group">
         <input type="text" id="searchInput" placeholder="🔍 Поиск по названию..." />
       </div>
-    </div>
-
-    <!-- Кнопки обновления -->
-    <div class="update-buttons">
-      <button onclick="window.loadFromGitHub()" class="extra-btn">
-        <i class="fas fa-sync"></i> Обновить с GitHub
-      </button>
-      <button onclick="window.loadFromAPI()" class="extra-btn">
-        <i class="fas fa-cloud-download-alt"></i> Обновить с Shikimori
-      </button>
     </div>
 
     <!-- Список аниме -->
@@ -145,4 +128,4 @@
 
   <script src="shikimori.js"></script>
 </body>
-        </html>
+  </html>
