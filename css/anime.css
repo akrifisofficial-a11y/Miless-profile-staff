@@ -1,0 +1,107 @@
+/* anime.css — Стили для страницы аниме */
+
+.anime-page .container {
+  max-width: 700px;
+}
+
+.anime-card-container {
+  margin: 2rem 0;
+}
+
+.anime-card-big {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 2rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s ease-out;
+}
+.anime-card-big:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 235, 200, 0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+.anime-card-big .poster {
+  width: 180px;
+  min-width: 180px;
+  aspect-ratio: 2/3;
+  border-radius: 1.2rem;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.02);
+}
+.anime-card-big .info {
+  flex: 1;
+}
+.anime-card-big .info h2 {
+  color: #f0e6d0;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+.anime-card-big .info .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1.5rem;
+  color: #a4b3d1;
+  font-size: 0.95rem;
+  margin: 0.5rem 0 1rem;
+}
+.anime-card-big .info .meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.anime-card-big .info .description {
+  color: #d0ddff;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+.anime-card-big .info .status-tag {
+  display: inline-block;
+  padding: 0.3rem 1.2rem;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: rgba(107, 143, 201, 0.15);
+  color: #6b8fc9;
+}
+.anime-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+.extra-btn.primary {
+  background: linear-gradient(135deg, #6b8fc9, #5865f2);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 20px rgba(88, 101, 242, 0.2);
+}
+.extra-btn.primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(88, 101, 242, 0.3);
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 600px) {
+  .anime-card-big {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem;
+  }
+  .anime-card-big .poster {
+    width: 140px;
+    min-width: 140px;
+  }
+  .anime-card-big .info .meta {
+    justify-content: center;
+  }
+}
