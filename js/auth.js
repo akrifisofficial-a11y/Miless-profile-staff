@@ -6,7 +6,7 @@
   const AUTH_CONFIG = {
     clientId: 'jMfGBBbTakHRGBXBqRDSv9Vv3woMjfvUqjbnOH5QX-A',          // ← замени
     clientSecret: '7G_Sr1MBdOU8O7GfF6JA6sSaf2KGRMH8nJcIqaP1RJI',  // ← замени
-    redirectUri: window.location.origin + '/callback.html',
+    redirectUri: window.location.origin + 'https://milesvv.c6t.ru//callback.html',
     authUrl: 'https://shikimori.io/oauth/authorize',
     tokenUrl: 'https://shikimori.io/oauth/token',
     scope: 'user_rates'
