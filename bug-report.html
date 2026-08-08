@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐞 Сообщить о баге — Miless</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/bug-report.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="twinkling" aria-hidden="true"></div>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand"><a href="index.html">🌙 Miless</a></div>
+      <div class="nav-toggle" id="navToggle">
+        <span></span><span></span><span></span>
+      </div>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li>
+        <li><a href="shikimori.html"><i class="fas fa-anchor"></i> Shikimori</a></li>
+        <li><a href="anime.html"><i class="fas fa-film"></i> Аниме</a></li>
+        <li><a href="updates.html"><i class="fas fa-newspaper"></i> Обновления</a></li>
+        <li><a href="update.html"><i class="fas fa-sync"></i> Обновить</a></li>
+        <li><a href="bug-report.html" class="active"><i class="fas fa-bug"></i> Сообщить о баге</a></li>
+        <li><a href="#" id="loginBtn"><i class="fas fa-sign-in-alt"></i> <span id="loginText">Войти</span></a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container bug-page">
+    <div class="glow-ring"></div>
+
+    <div class="page-header">
+      <div class="bug-icon">
+        <i class="fas fa-bug"></i>
+        <span class="bug-icon-ring"></span>
+      </div>
+      <h1>Сообщить о баге</h1>
+      <p class="subtitle">Помоги нам сделать сайт лучше</p>
+    </div>
+
+    <div class="bug-form-container">
+      <form id="bugForm" action="https://formspree.io/f/xyegklpv" method="POST">
+        <input type="hidden" name="_subject" value="🐞 Новый баг на сайте Miless" />
+        <input type="hidden" name="_captcha" value="false" />
+
+        <div class="form-group">
+          <label for="bugTitle">
+            <i class="fas fa-heading"></i> Краткое описание <span class="required">*</span>
+          </label>
+          <input type="text" id="bugTitle" name="Заголовок" placeholder="Например: не загружается список аниме" required />
+        </div>
+
+        <div class="form-group">
+          <label for="bugDescription">
+            <i class="fas fa-align-left"></i> Подробное описание <span class="required">*</span>
+          </label>
+          <textarea id="bugDescription" name="Описание" rows="5" placeholder="Что произошло? Какие действия привели к ошибке?" required></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bugBrowser"><i class="fas fa-globe"></i> Браузер</label>
+            <select id="bugBrowser" name="Браузер">
+              <option value="Chrome">Chrome</option>
+              <option value="Firefox">Firefox</option>
+              <option value="Safari">Safari</option>
+              <option value="Edge">Edge</option>
+              <option value="Opera">Opera</option>
+              <option value="Other">Другой</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="bugDevice"><i class="fas fa-mobile-alt"></i> Устройство</label>
+            <select id="bugDevice" name="Устройство">
+              <option value="Desktop">Компьютер</option>
+              <option value="Mobile">Телефон</option>
+              <option value="Tablet">Планшет</option>
+              <option value="Other">Другое</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="bugEmail"><i class="fas fa-envelope"></i> Ваш email (для связи)</label>
+          <input type="email" id="bugEmail" name="Email" placeholder="your@email.com" />
+        </div>
+
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-paper-plane"></i> Отправить отчёт
+        </button>
+      </form>
+
+      <div id="successMessage" class="success-message" style="display: none;">
+        <i class="fas fa-check-circle"></i>
+        <h3>Спасибо за отчёт!</h3>
+        <p>Мы получили ваше сообщение и рассмотрим его в ближайшее время.</p>
+        <button class="extra-btn" onclick="location.reload()">Отправить ещё один</button>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <h3><i class="fas fa-info-circle"></i> Что происходит с отчётом?</h3>
+      <ul>
+        <li>Отчёт отправляется на почту разработчика.</li>
+        <li>Вы получите ответ, если оставили email.</li>
+        <li>Ваши данные не передаются третьим лицам.</li>
+      </ul>
+    </div>
+
+    <footer>
+      <p>🌙 Miless • 2026 • Сделано с ❤️</p>
+    </footer>
+  </div>
+
+  <script src="js/script.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/bug-report.js"></script>
+</body>
+</html>
