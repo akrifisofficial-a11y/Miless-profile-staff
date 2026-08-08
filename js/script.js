@@ -62,7 +62,7 @@
   // Счётчик дней
   const daysValue = document.getElementById('daysValue');
   if (daysValue) {
-    const registrationDate = new Date(2023, 6, 15); // ← замени на свою дату
+    const registrationDate = new Date(2023, 8, 14); // ← замени на свою дату
     const now = new Date();
     const diffDays = Math.floor((now - registrationDate) / (1000 * 60 * 60 * 24));
     daysValue.textContent = diffDays > 0 ? diffDays : '0';
