@@ -1,0 +1,260 @@
+/* bug-report.css — улучшенный стиль для страницы багов */
+
+.bug-page .container {
+  max-width: 700px;
+}
+
+.page-header {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+
+.bug-icon {
+  position: relative;
+  display: inline-block;
+  font-size: 3.5rem;
+  color: #f87171;
+  margin-bottom: 0.5rem;
+  animation: bugFloat 3s ease-in-out infinite;
+}
+
+.bug-icon-ring {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  border-radius: 50%;
+  border: 2px solid rgba(248, 113, 113, 0.2);
+  animation: ringPulse 2s ease-in-out infinite;
+}
+
+@keyframes bugFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.page-header h1 {
+  font-size: 2.8rem;
+  background: linear-gradient(135deg, #f0e6d0, #c8b8a0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.2rem;
+}
+
+.page-header .subtitle {
+  color: #6c7b9c;
+  font-size: 1.1rem;
+}
+
+/* ===== ФОРМА ===== */
+.bug-form-container {
+  margin: 2rem 0;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 2rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.3s ease;
+}
+
+.bug-form-container:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 235, 200, 0.06);
+}
+
+.bug-form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: left;
+}
+
+.form-group label {
+  color: #a4b3d1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-group label i {
+  color: #6b8fc9;
+  font-size: 0.85rem;
+  width: 1.2rem;
+}
+
+.form-group .required {
+  color: #f87171;
+  margin-left: 0.2rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 0.7rem 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #d0ddff;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: rgba(255, 235, 200, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 30px rgba(255, 235, 200, 0.02);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a9bb8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ===== КНОПКА ОТПРАВКИ ===== */
+.submit-btn {
+  padding: 0.9rem 2rem;
+  border-radius: 3rem;
+  background: linear-gradient(135deg, #6b8fc9, #5865f2);
+  color: white;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(88, 101, 242, 0.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(88, 101, 242, 0.4);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== УСПЕШНОЕ СООБЩЕНИЕ ===== */
+.success-message {
+  text-align: center;
+  padding: 2rem 1rem;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.success-message i {
+  font-size: 3.5rem;
+  color: #4ade80;
+  margin-bottom: 1rem;
+}
+
+.success-message h3 {
+  color: #f0e6d0;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.success-message p {
+  color: #a4b3d1;
+  margin-bottom: 1.5rem;
+}
+
+/* ===== ИНФО-БЛОК ===== */
+.info-block {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  text-align: left;
+}
+
+.info-block h3 {
+  color: #f0e6d0;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.info-block h3 i {
+  color: #6b8fc9;
+}
+
+.info-block ul {
+  color: #a4b3d1;
+  line-height: 2;
+  list-style: none;
+  padding: 0;
+}
+
+.info-block ul li::before {
+  content: "• ";
+  color: #6b8fc9;
+}
+
+/* ===== АНИМАЦИИ ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 600px) {
+  .bug-page .container {
+    padding: 1.5rem;
+  }
+
+  .bug-form-container {
+    padding: 1.2rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+  }
+
+  .bug-icon {
+    font-size: 2.8rem;
+  }
+}
