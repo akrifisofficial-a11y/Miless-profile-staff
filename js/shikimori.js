@@ -1,13 +1,15 @@
-// shikimori.js — Загрузка из JSON на GitHub + ссылки
+// shikimori.js — Загрузка из JSON на GitHub + ссылки на детальную страницу
 
 (function() {
   'use strict';
 
+  // --- КОНФИГУРАЦИЯ ---
   const CONFIG = {
     githubJsonUrl: 'https://raw.githubusercontent.com/akrifisofficial-a11y/Miless-profile-staff/main/anime_rates.json',
     shikimoriBaseUrl: 'https://shikimori.io'
   };
 
+  // --- СОСТОЯНИЕ ---
   const state = {
     allAnime: [],
     filteredAnime: [],
@@ -17,6 +19,7 @@
     isLoading: false
   };
 
+  // --- СТАТУСЫ ---
   const STATUS_MAP = {
     'planned': '📅 Запланировано',
     'watching': '⏳ Смотрю',
@@ -25,6 +28,7 @@
     'dropped': '❌ Брошено'
   };
 
+  // --- DOM ЭЛЕМЕНТЫ ---
   const DOM = {
     grid: document.getElementById('animeGrid'),
     stats: {
@@ -47,6 +51,7 @@
     apiCount: document.getElementById('apiCount')
   };
 
+  // --- ПОЛУЧЕНИЕ ПОСТЕРА ---
   function getAnimePoster(anime) {
     if (!anime) return getPlaceholder('?');
     let url = null;
@@ -54,7 +59,7 @@
     else if (anime.image?.original) url = anime.image.original;
     else if (typeof anime.image === 'string') url = anime.image;
     if (url) {
-      if (url.startsWith('/')) url = 'https://shikimori.one' + url;
+      if (url.startsWith('/')) url = 'https://shikimori.io' + url;
       return url;
     }
     return getPlaceholder(anime.russian || anime.name || '?');
@@ -67,6 +72,7 @@
     return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='300'%3E%3Crect fill='%231a1f2e' width='200' height='300'/%3E%3Ccircle cx='100' cy='120' r='50' fill='${color.replace('#', '%23')}' opacity='0.15'/%3E%3Ctext x='100' y='140' text-anchor='middle' dy='.3em' fill='${color.replace('#', '%23')}' font-size='56' font-family='sans-serif' font-weight='bold'%3E${char}%3C/text%3E%3C/svg%3E`;
   }
 
+  // --- ЗАГРУЗКА С GITHUB ---
   async function loadFromGitHub() {
     if (state.isLoading) return;
     state.isLoading = true;
@@ -96,6 +102,7 @@
     state.isLoading = false;
   }
 
+  // --- ОБНОВЛЕНИЕ UI ---
   function updateUI(data) {
     DOM.apiDot.className = 'api-dot success';
     DOM.apiText.textContent = '✅ Загружено';
@@ -110,6 +117,7 @@
     DOM.apiText.textContent = text;
   }
 
+  // --- СТАТИСТИКА ---
   function updateStats(data) {
     const total = data.length;
     const completed = data.filter(i => i.status === 'completed').length;
@@ -126,6 +134,7 @@
     DOM.stats.totalEpisodes.textContent = eps;
   }
 
+  // --- ФИЛЬТРЫ И СОРТИРОВКА ---
   function applyFilters() {
     let filtered = [...state.allAnime];
     if (state.currentFilter !== 'all') {
@@ -150,6 +159,7 @@
     renderAnimeList(filtered);
   }
 
+  // --- ОТРИСОВКА КАРТОЧЕК (ССЫЛКА НА ДЕТАЛЬНУЮ СТРАНИЦУ) ---
   function renderAnimeList(data) {
     if (!DOM.grid) return;
     if (!data || data.length === 0) {
@@ -161,6 +171,7 @@
     DOM.loadMore.style.display = data.length > 20 ? 'block' : 'none';
   }
 
+  // ⭐ ГЛАВНОЕ ИЗМЕНЕНИЕ: ссылка на anime-detail.html
   function createAnimeCard(item) {
     const anime = item.anime;
     const title = anime.russian || anime.name || 'Без названия';
@@ -169,14 +180,15 @@
     const episodes = anime.episodes || '?';
     const poster = getAnimePoster(anime);
     const genres = (anime.genres || []).slice(0,3).map(g => g.russian || g.name).join(', ');
-    let url = '#';
-    if (anime.url) {
-      url = anime.url.startsWith('http') ? anime.url : CONFIG.shikimoriBaseUrl + anime.url;
-    }
+
+    // 🔗 Ссылка на детальную страницу сайта
+    const detailUrl = `anime-detail.html?id=${item.id}`;
+
     return `
-      <a href="${url}" target="_blank" class="anime-card-link" title="Открыть на Shikimori">
+      <a href="${detailUrl}" class="anime-card-link" title="Открыть подробнее">
         <div class="anime-card">
-          <img src="${poster}" alt="${title}" class="anime-poster" loading="lazy" onerror="this.src='${getPlaceholder(title)}'">
+          <img src="${poster}" alt="${title}" class="anime-poster" loading="lazy" 
+               onerror="this.src='${getPlaceholder(title)}'">
           <div class="anime-title">${title}</div>
           <div class="anime-status">${status}</div>
           ${score !== '—' ? `<div class="anime-score">⭐ ${score}</div>` : ''}
@@ -188,6 +200,7 @@
     `;
   }
 
+  // --- СЛУЧАЙНОЕ АНИМЕ ---
   function showRandomAnime(data) {
     if (!DOM.random || !data || data.length === 0) {
       DOM.random.innerHTML = '<div class="loading-spinner">📭 Аниме не найдены</div>';
@@ -216,6 +229,7 @@
     `;
   }
 
+  // --- ТОП-5 ---
   function showTopAnime(data) {
     if (!DOM.top || !data || data.length === 0) {
       DOM.top.innerHTML = '<div class="loading-spinner">📭 Нет оценённых аниме</div>';
@@ -246,6 +260,7 @@
     }).join('')}</div>`;
   }
 
+  // --- ЗАГРУЗКА ЕЩЁ ---
   function loadMore() {
     const data = state.filteredAnime;
     const current = DOM.grid.children.length;
@@ -258,6 +273,7 @@
     }
   }
 
+  // --- ИНИЦИАЛИЗАЦИЯ ---
   function init() {
     console.log('🌙 Shikimori страница загружена');
     loadFromGitHub();
