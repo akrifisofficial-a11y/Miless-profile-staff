@@ -8,7 +8,7 @@
     clientSecret: '7G_Sr1MBdOU8O7GfF6JA6sSaf2KGRMH8nJcIqaP1RJI',
     redirectUri: window.location.origin + '/callback.html',
     // ⚠️ Убедись, что здесь правильный домен (где зарегистрировано приложение)
-    authUrl: 'https://shikimori.io/oauth/applications',
+    authUrl: 'https://shikimori.io/oauth/authorize',
     tokenUrl: 'https://shikimori.io/oauth/token',
     scope: 'user_rates'
   };
