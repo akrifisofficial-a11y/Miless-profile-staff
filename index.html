@@ -3,19 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Miless — Мои соцсети</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>🌙 Miless</title>
+  <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
-  <!-- Звёздный фон -->
   <div class="stars" aria-hidden="true"></div>
   <div class="twinkling" aria-hidden="true"></div>
 
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand"><a href="index.html">🌙 Miless</a></div>
+      <div class="nav-toggle" id="navToggle">
+        <span></span><span></span><span></span>
+      </div>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html" class="active"><i class="fas fa-home"></i> Главная</a></li>
+        <li><a href="shikimori.html"><i class="fas fa-anchor"></i> Shikimori</a></li>
+        <li><a href="anime.html"><i class="fas fa-film"></i> Аниме</a></li>
+        <li><a href="updates.html"><i class="fas fa-newspaper"></i> Обновления</a></li>
+        <li><a href="#" id="loginBtn"><i class="fas fa-sign-in-alt"></i> <span id="loginText">Войти</span></a></li>
+      </ul>
+    </div>
+  </nav>
+
   <div class="container">
     <div class="glow-ring"></div>
-
-    <!-- Аватар и ник -->
     <div class="profile-header">
       <div class="avatar-wrapper">
         <img src="https://via.placeholder.com/120/1a1f2e/6b8fc9?text=M" alt="Miless" class="avatar" />
@@ -25,7 +38,6 @@
       <p class="subtitle">✨ Модератор Shikimori • Любитель аниме</p>
     </div>
 
-    <!-- Статус-бар -->
     <div class="status-bar">
       <div class="status-indicator online">
         <span class="status-dot"></span>
@@ -34,72 +46,31 @@
       </div>
     </div>
 
-    <!-- Счётчик "Дней на Shikimori" -->
     <div class="shikimori-days" id="shikimoriDays">
-      <div class="days-number" id="daysCount">
-        <i class="fas fa-calendar-alt" style="font-size: 2rem; color: #6b8fc9; margin-right: 0.5rem;"></i>
+      <div class="days-number">
+        <i class="fas fa-calendar-alt"></i>
         <span id="daysValue">--</span>
       </div>
       <div class="days-label">дней на Shikimori</div>
-      <div class="days-sub">с 2023 года</div>
     </div>
 
-    <!-- Ссылки на соцсети -->
     <div class="links-grid">
       <a href="https://vk.ru/akrifisofficial" target="_blank" class="link-card vk">
         <i class="fab fa-vk"></i>
         <span>VK</span>
-        <div class="status-badge online">🟢</div>
       </a>
       <a href="https://shikimori.io/Miless" target="_blank" class="link-card shikimori">
         <i class="fas fa-anchor"></i>
         <span>Shikimori</span>
-        <div class="status-badge idle">🟡</div>
       </a>
       <a href="https://discord.com/users/1438577441231863842" target="_blank" class="link-card discord">
         <i class="fab fa-discord"></i>
         <span>Discord</span>
-        <div class="status-badge online">🟢</div>
       </a>
       <a href="https://anixart-app.com/profile/4077379" target="_blank" class="link-card anixart">
         <i class="fas fa-film"></i>
         <span>Anixart</span>
-        <div class="status-badge offline">🔴</div>
       </a>
-    </div>
-
-    <!-- Дополнительные кнопки -->
-    <div class="extra-links">
-  <button class="extra-btn" id="showAnimeBtn">
-    <i class="fas fa-list"></i> Моё аниме
-  </button>
-  <button class="extra-btn" id="showQRBtn">
-    <i class="fas fa-qrcode"></i> QR-код
-  </button>
-  <a href="under-construction.html" class="extra-btn">
-    <i class="fas fa-anchor"></i> Shikimori
-  </a>
-  </div>
-
-    <!-- Блок с аниме-списком (скрыт по умолчанию) -->
-    <div id="animeListContainer" style="display: none;">
-      <div class="anime-stats">
-        <span>📊 Всего: <strong id="totalAnime">0</strong></span>
-        <span>✅ Просмотрено: <strong id="completedAnime">0</strong></span>
-        <span>⏳ Смотрю: <strong id="watchingAnime">0</strong></span>
-        <span>📅 В планах: <strong id="plannedAnime">0</strong></span>
-      </div>
-      <div id="animeGrid" class="anime-grid">
-        <div class="loading-anime">Загрузка...</div>
-      </div>
-    </div>
-
-    <!-- Блок с QR-кодом (скрыт по умолчанию) -->
-    <div id="qrContainer" style="display: none;" class="qr-container">
-      <h3>🔗 QR-код сайта</h3>
-      <div id="qrCode"></div>
-      <p class="qr-sub">Наведи камеру, чтобы перейти</p>
-      <button class="extra-btn close-btn" id="closeQRBtn">✕ Закрыть</button>
     </div>
 
     <footer>
@@ -107,10 +78,7 @@
     </footer>
   </div>
 
-  <!-- Подключаем QR-библиотеку -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  
-  <!-- Подключаем скрипты -->
-  <script src="script.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>
