@@ -3,8 +3,8 @@
 (function() {
   'use strict';
 
-  const ANIME_URL = 'data/anime.json';
-  const SHIKI_BASE = 'https://shikimori.one';
+  const ANIME_URL = 'anime_rates.json';
+  const SHIKI_BASE = 'https://shikimori.io';
 
   let list = [];
   let current = null;
