@@ -1,85 +1,49 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🌙 Miless</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои любимые аниме</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <div class="stars" aria-hidden="true"></div>
-  <div class="twinkling" aria-hidden="true"></div>
+    <div class="container">
+        <header class="profile">
+            <img src="https://i.pravatar.cc/150?img=11" alt="Аватар" class="avatar">
+            <h1>Мои любимые аниме</h1>
+            <p class="bio">✨ Автоматически из моего списка Shikimori</p>
+        </header>
 
-  <nav class="navbar">
-    <div class="nav-container">
-      <div class="nav-brand"><a href="index.html">🌙 Miless</a></div>
-      <div class="nav-toggle" id="navToggle">
-        <span></span><span></span><span></span>
-      </div>
-      <ul class="nav-menu" id="navMenu">
-        <li><a href="index.html" class="active"><i class="fas fa-home"></i> Главная</a></li>
-        <li><a href="shikimori.html"><i class="fas fa-anchor"></i> Shikimori</a></li>
-        <li><a href="anime.html"><i class="fas fa-film"></i> Аниме</a></li>
-        <li><a href="updates.html"><i class="fas fa-newspaper"></i> Обновления</a></li>
-        <li><a href="ideas.html"><i class="fas fa-lightbulb"></i> Идеи и улучшения</a></li>
-        <li><a href="bug-report.html"><i class="fas fa-bug"></i> Сообщить о баге</a></li>
-      </ul>
-    </div>
-  </nav>
+        <section class="links">
+            <a href="https://anixart-app.com/profile/4077379" target="_blank" class="link-card anixart">
+                <i class="fas fa-play"></i> Anixart
+            </a>
+            <a href="https://vk.ru/akrifisofficial" target="_blank" class="link-card vk">
+                <i class="fab fa-vk"></i> VK
+            </a>
+            <a href="https://discord.com/users/1438577441231863842" target="_blank" class="link-card discord">
+                <i class="fab fa-discord"></i> Discord
+            </a>
+        </section>
 
-  <div class="container">
-    <div class="glow-ring"></div>
-    <div class="profile-header">
-      <div class="avatar-wrapper">
-        <img src="https://via.placeholder.com/120/1a1f2e/6b8fc9?text=M" alt="Miless" class="avatar" />
-        <div class="avatar-ring"></div>
-      </div>
-      <h1>Miless</h1>
-      <p class="subtitle">✨ Модератор Shikimori • Любитель аниме</p>
+        <section class="anime-section">
+            <h2>❤️ Мои любимые аниме</h2>
+            <div class="anime-grid" id="animeGrid"></div>
+        </section>
     </div>
 
-    <div class="status-bar">
-      <div class="status-indicator online">
-        <span class="status-dot"></span>
-        <span class="status-text">В сети</span>
-        <span class="status-activity">🎮 Играю в Cyberpunk 2077</span>
-      </div>
+    <!-- Модальное окно для плеера -->
+    <div id="playerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h3 id="modalTitle">Название аниме</h3>
+            <div id="playerContainer">
+                <p id="loadingMsg">Загрузка видео...</p>
+            </div>
+        </div>
     </div>
 
-    <div class="shikimori-days" id="shikimoriDays">
-      <div class="days-number">
-        <i class="fas fa-calendar-alt"></i>
-        <span id="daysValue">--</span>
-      </div>
-      <div class="days-label">дней на Shikimori</div>
-    </div>
-
-    <div class="links-grid">
-      <a href="https://vk.ru/akrifisofficial" target="_blank" class="link-card vk">
-        <i class="fab fa-vk"></i>
-        <span>VK</span>
-      </a>
-      <a href="https://shikimori.io/Miless" target="_blank" class="link-card shikimori">
-        <i class="fas fa-anchor"></i>
-        <span>Shikimori</span>
-      </a>
-      <a href="https://discord.com/users/1438577441231863842" target="_blank" class="link-card discord">
-        <i class="fab fa-discord"></i>
-        <span>Discord</span>
-      </a>
-      <a href="https://anixart-app.com/profile/4077379" target="_blank" class="link-card anixart">
-        <i class="fas fa-film"></i>
-        <span>Anixart</span>
-      </a>
-    </div>
-
-    <footer>
-      <p>🌙 обновлено: <span id="last-update">только что</span></p>
-    </footer>
-  </div>
-
-  <script src="js/script.js"></script>
-  <script src="js/auth.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
