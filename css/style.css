@@ -333,3 +333,7 @@ body {
     .profile h1 { font-size: 1.8rem; }
     .link-card { padding: 0.5rem 0.9rem; font-size: 0.8rem; }
 }
+.nav-menu a.active {
+    color: #8b6cf0;
+    font-weight: 600;
+}
