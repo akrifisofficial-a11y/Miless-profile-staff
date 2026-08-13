@@ -1,108 +1,102 @@
-// ================================================
-//  УНИВЕРСАЛЬНЫЙ СКРИПТ ДЛЯ ВАШЕГО МЕНЮ
-//  Классы: .navbar, .nav-toggle, .nav-menu
-//  Работает на всех страницах, подсвечивает активный пункт
-// ================================================
+// ============================================
+//  ГАМБУРГЕР-МЕНЮ + ПОДСВЕТКА СТРАНИЦЫ + КНОПКА ВХОДА
+//  Работает с классами .nav-toggle и .nav-menu
+//  Подключается на всех страницах
+// ============================================
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Находим элементы
-    const navToggle = document.getElementById('navToggle') || document.querySelector('.nav-toggle');
-    const navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
+    // ----- Элементы -----
+    const toggle = document.querySelector('.nav-toggle');
+    const menu = document.querySelector('.nav-menu');
     const body = document.body;
 
-    // Если меню нет – выходим
-    if (!navToggle || !navMenu) return;
+    // Если меню нет – выходим (чтобы не было ошибок на страницах без меню)
+    if (!toggle || !menu) return;
 
-    // ----- 1. Переключение меню (гамбургер) -----
+    // ----- 1. Функция переключения меню -----
     function toggleMenu(forceState) {
-        const isOpen = typeof forceState === 'boolean' ? forceState : !navMenu.classList.contains('active');
-        navMenu.classList.toggle('active', isOpen);
-        navToggle.classList.toggle('active', isOpen);
-        // Блокировка скролла фона
+        const isOpen = typeof forceState === 'boolean' ? forceState : !menu.classList.contains('active');
+        menu.classList.toggle('active', isOpen);
+        toggle.classList.toggle('active', isOpen);
         body.style.overflow = isOpen ? 'hidden' : '';
     }
 
-    // Клик по гамбургеру
-    navToggle.addEventListener('click', function (e) {
+    // ----- 2. Клик по гамбургеру -----
+    toggle.addEventListener('click', function (e) {
         e.stopPropagation();
         toggleMenu();
     });
 
-    // ----- 2. Закрытие при клике на пункт меню -----
-    const menuLinks = navMenu.querySelectorAll('a');
-    menuLinks.forEach(link => {
+    // ----- 3. Закрытие при клике на ссылку -----
+    menu.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function () {
-            if (navMenu.classList.contains('active')) {
+            if (menu.classList.contains('active')) {
                 toggleMenu(false);
             }
         });
     });
 
-    // ----- 3. Закрытие при клике вне меню -----
+    // ----- 4. Закрытие при клике вне меню -----
     document.addEventListener('click', function (e) {
-        if (!e.target.closest('.navbar') && navMenu.classList.contains('active')) {
+        if (!e.target.closest('.navbar') && menu.classList.contains('active')) {
             toggleMenu(false);
         }
     });
 
-    // ----- 4. Закрытие по Escape -----
+    // ----- 5. Закрытие по Escape -----
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+        if (e.key === 'Escape' && menu.classList.contains('active')) {
             toggleMenu(false);
         }
     });
 
-    // ----- 5. Закрытие при ресайзе (если ширина > 768px) -----
-    let resizeTimeout;
+    // ----- 6. Закрытие при ресайзе (ширина > 768px) -----
+    let resizeTimer;
     window.addEventListener('resize', function () {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (window.innerWidth > 768 && menu.classList.contains('active')) {
                 toggleMenu(false);
             }
         }, 100);
     });
 
-    // ----- 6. Автоматическая подсветка активной страницы -----
+    // ----- 7. Автоматическая подсветка активной страницы -----
     const currentFile = window.location.pathname.split('/').pop() || 'index.html';
-
-    menuLinks.forEach(link => {
+    menu.querySelectorAll('a').forEach(link => {
         const href = link.getAttribute('href');
-        // Убираем якоря и параметры (если есть)
+        // Убираем параметры и якоря для сравнения
         const cleanHref = href ? href.split('?')[0].split('#')[0] : '';
-        if (cleanHref === currentFile || (currentFile === '' && cleanHref === 'index.html')) {
+        if (cleanHref === currentFile) {
             link.classList.add('active');
         } else {
             link.classList.remove('active');
         }
     });
 
-    // ----- 7. Обработка кнопки "Войти" -----
+    // ----- 8. Кнопка "Войти" (демо-функция) -----
     const loginBtn = document.getElementById('loginBtn');
     const loginText = document.getElementById('loginText');
-    if (loginBtn) {
-        // Проверяем, залогинен ли пользователь (заглушка)
+    if (loginBtn && loginText) {
+        // Проверяем состояние входа (хранится в localStorage)
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        if (isLoggedIn) {
-            loginText.textContent = 'Выйти';
-        }
+        loginText.textContent = isLoggedIn ? 'Выйти' : 'Войти';
 
         loginBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            const currentStatus = loginText.textContent;
-            if (currentStatus === 'Войти') {
+            if (loginText.textContent === 'Войти') {
                 // Имитация входа
                 localStorage.setItem('isLoggedIn', 'true');
                 loginText.textContent = 'Выйти';
-                alert('Вы вошли! (демо)');
+                alert('Вы вошли (демо)');
             } else {
                 // Выход
                 localStorage.removeItem('isLoggedIn');
                 loginText.textContent = 'Войти';
-                alert('Вы вышли! (демо)');
+                alert('Вы вышли (демо)');
             }
             // Закрываем меню, если оно открыто
-            if (navMenu.classList.contains('active')) {
+            if (menu.classList.contains('active')) {
                 toggleMenu(false);
             }
         });
