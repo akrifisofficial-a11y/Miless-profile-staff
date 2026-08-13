@@ -7,14 +7,14 @@
 
 body {
     font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
-    background: #0b0d15;
-    background-image: radial-gradient(circle at 20% 30%, rgba(30, 30, 60, 0.6) 0%, #0b0d15 70%);
+    background: #0a0c14;
+    background-image: radial-gradient(ellipse at 30% 20%, #1a1a3a 0%, #0a0c14 70%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding: 2rem 1.5rem;
+    padding: 1.5rem 1rem;
     color: #e8edf5;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .container {
@@ -22,31 +22,187 @@ body {
     width: 100%;
 }
 
+/* ===== Шапка ===== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 1.8rem;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 2.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    position: relative;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #e8edf5;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.logo span {
+    color: #8b6cf0;
+}
+
+/* ===== Меню ===== */
+.nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav-list {
+    display: flex;
+    list-style: none;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.nav-list li a {
+    color: #a8b2d9;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.5rem 1.2rem;
+    border-radius: 30px;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.nav-list li a i {
+    font-size: 1rem;
+    transition: transform 0.2s;
+}
+.nav-list li a:hover i {
+    transform: translateY(-2px);
+}
+.nav-list li a:hover,
+.nav-list li a.active {
+    background: rgba(139, 108, 240, 0.2);
+    color: #c9b8ff;
+    box-shadow: 0 0 20px rgba(139, 108, 240, 0.1);
+}
+
+/* ===== Гамбургер ===== */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    padding: 6px 4px;
+    background: transparent;
+    border: none;
+    transition: all 0.3s;
+}
+.hamburger span {
+    display: block;
+    width: 28px;
+    height: 3px;
+    background: #d0d8f0;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+/* Анимация в крестик при открытом меню */
+.hamburger.open span:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+.hamburger.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* ===== Адаптив для меню ===== */
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+    .nav-list {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 10px;
+        right: 10px;
+        background: rgba(10, 12, 20, 0.96);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        flex-direction: column;
+        padding: 1.2rem 0.5rem;
+        gap: 0.3rem;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        transform: scaleY(0);
+        transform-origin: top center;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 200;
+    }
+    .nav-list.open {
+        transform: scaleY(1);
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .nav-list li a {
+        padding: 0.8rem 1.5rem;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+}
+
 /* ===== Профиль ===== */
 .profile {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2.8rem;
 }
 
+.avatar-wrapper {
+    position: relative;
+    display: inline-block;
+}
 .avatar {
-    width: 110px;
-    height: 110px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    border: 3px solid #7f5af0;
-    box-shadow: 0 0 30px rgba(127, 90, 240, 0.3);
+    border: 3px solid #8b6cf0;
+    box-shadow: 0 0 30px rgba(139, 108, 240, 0.3);
     object-fit: cover;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.4s, box-shadow 0.4s;
+    position: relative;
+    z-index: 2;
 }
 .avatar:hover {
-    transform: scale(1.04);
-    box-shadow: 0 0 50px rgba(127, 90, 240, 0.5);
+    transform: scale(1.06);
+    box-shadow: 0 0 60px rgba(139, 108, 240, 0.5);
+}
+.avatar-glow {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139, 108, 240, 0.2), transparent 70%);
+    z-index: 1;
+    animation: pulseGlow 3s ease-in-out infinite;
+}
+@keyframes pulseGlow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
 }
 
 .profile h1 {
-    font-size: 2.6rem;
+    font-size: 2.8rem;
     font-weight: 700;
-    margin-top: 1rem;
-    background: linear-gradient(135deg, #f0e6ff, #b7a4ff);
+    margin-top: 0.8rem;
+    background: linear-gradient(135deg, #e8deff, #b7a4ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -54,14 +210,14 @@ body {
 }
 
 .bio {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     color: #a8b2d9;
     margin-top: 0.3rem;
-    font-weight: 300;
     background: rgba(255, 255, 255, 0.03);
     display: inline-block;
-    padding: 0.3rem 1.8rem;
+    padding: 0.4rem 2.2rem;
     border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(4px);
 }
 
@@ -70,16 +226,15 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1.2rem;
-    margin-bottom: 3.5rem;
+    gap: 1.4rem;
+    margin-bottom: 3rem;
 }
 
 .link-card {
     background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    padding: 0.8rem 2rem;
+    padding: 0.9rem 2.2rem;
     border-radius: 50px;
     color: #d0d8f0;
     font-size: 1rem;
@@ -88,268 +243,93 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
 }
-
 .link-card i {
     font-size: 1.2rem;
     transition: transform 0.2s;
 }
-.link-card:hover i {
-    transform: translateY(-2px) scale(1.1);
-}
-
 .link-card:hover {
-    transform: translateY(-5px) scale(1.02);
+    transform: translateY(-6px) scale(1.02);
     background: rgba(255, 255, 255, 0.1);
-    border-color: #7f5af0;
-    box-shadow: 0 12px 30px rgba(127, 90, 240, 0.25);
+    border-color: #8b6cf0;
+    box-shadow: 0 12px 35px rgba(139, 108, 240, 0.2);
 }
-
-.link-card.anixart:hover { border-color: #ff6b6b; box-shadow: 0 12px 30px rgba(255, 107, 107, 0.2); }
-.link-card.vk:hover { border-color: #4c75a3; box-shadow: 0 12px 30px rgba(76, 117, 163, 0.2); }
-.link-card.tg:hover { border-color: #0088cc; box-shadow: 0 12px 30px rgba(0, 136, 204, 0.2); }
-
-/* ===== Заголовок раздела ===== */
-.anime-section h2 {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 2.2rem;
-    letter-spacing: 1px;
-    color: #d4dcf0;
+.link-card:hover i {
+    transform: translateY(-3px) scale(1.1);
 }
-.anime-section h2::after {
-    content: '';
-    display: block;
-    width: 60px;
-    height: 3px;
-    background: linear-gradient(90deg, #7f5af0, #b7a4ff);
-    margin: 0.6rem auto 0;
-    border-radius: 4px;
-}
+.link-card.anixart:hover { border-color: #ff6b6b; box-shadow: 0 12px 35px rgba(255, 107, 107, 0.2); }
+.link-card.vk:hover { border-color: #4c75a3; box-shadow: 0 12px 35px rgba(76, 117, 163, 0.2); }
+.link-card.tg:hover { border-color: #0088cc; box-shadow: 0 12px 35px rgba(0, 136, 204, 0.2); }
 
-/* ===== Сетка карточек ===== */
-.anime-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap: 2rem;
-}
-
-/* ===== Карточка аниме ===== */
-.anime-card {
+/* ===== Инфо-блок ===== */
+.info-block {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border-radius: 20px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    cursor: pointer;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    will-change: transform;
-    animation: cardFadeIn 0.6s ease both;
-}
-
-@keyframes cardFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.96);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.anime-card:hover {
-    transform: translateY(-12px) scale(1.02);
-    border-color: #7f5af0;
-    box-shadow: 0 20px 50px rgba(127, 90, 240, 0.3);
-}
-
-/* Глянцевое свечение при наведении */
-.anime-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    background: radial-gradient(circle at 50% 0%, rgba(127, 90, 240, 0.08), transparent 70%);
-    opacity: 0;
-    transition: opacity 0.4s;
-    pointer-events: none;
-}
-.anime-card:hover::after {
-    opacity: 1;
-}
-
-.anime-card img {
-    width: 100%;
-    height: 260px;
-    object-fit: cover;
-    display: block;
-    border-bottom: 2px solid rgba(127, 90, 240, 0.15);
-    transition: transform 0.4s;
-}
-.anime-card:hover img {
-    transform: scale(1.03);
-}
-
-.anime-info {
-    padding: 1.2rem 1rem 1.5rem;
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
     text-align: center;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.anime-info h3 {
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-    color: #eef3ff;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.anime-info .year {
-    font-size: 0.9rem;
-    color: #8892b0;
-    margin-bottom: 0.6rem;
-}
-
-.anime-info .genre {
-    font-size: 0.75rem;
-    background: rgba(127, 90, 240, 0.15);
-    padding: 0.3rem 0.9rem;
-    border-radius: 30px;
-    display: inline-block;
-    align-self: center;
-    color: #b7a4ff;
-    border: 1px solid rgba(127, 90, 240, 0.1);
-    backdrop-filter: blur(4px);
-    transition: background 0.3s;
-}
-.anime-card:hover .genre {
-    background: rgba(127, 90, 240, 0.25);
-}
-
-/* ===== Модальное окно (плеер) ===== */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    animation: modalFadeIn 0.3s ease;
-}
-
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.modal-content {
-    background: #121624;
-    margin: 6% auto;
-    padding: 24px;
-    border-radius: 28px;
-    border: 1px solid rgba(127, 90, 240, 0.25);
-    max-width: 920px;
-    width: 92%;
-    position: relative;
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7);
-    transition: all 0.3s;
-}
-
-.close-btn {
-    position: absolute;
-    right: 22px;
-    top: 14px;
-    color: #8892b0;
-    font-size: 2.4rem;
-    font-weight: 300;
-    cursor: pointer;
-    transition: color 0.2s, transform 0.2s;
-    line-height: 1;
-}
-.close-btn:hover {
-    color: #ff6b6b;
-    transform: rotate(90deg);
-}
-
-#modalTitle {
-    color: #eef3ff;
-    font-size: 1.7rem;
-    font-weight: 600;
-    text-align: center;
-    margin: 8px 0 20px;
-    letter-spacing: 0.5px;
-}
-
-#playerContainer {
-    position: relative;
-    padding-bottom: 56.25%; /* 16:9 */
-    height: 0;
-    overflow: hidden;
-    border-radius: 16px;
-    background: #0b0d15;
     border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 1.5rem;
+    transition: box-shadow 0.3s;
 }
-
-#playerContainer iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
+.info-block:hover {
+    box-shadow: 0 0 40px rgba(139, 108, 240, 0.05);
 }
-
-#loadingMsg {
+.info-block h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+    color: #d4dcf0;
+}
+.info-block p {
     color: #a8b2d9;
-    text-align: center;
-    padding: 3rem;
-    font-size: 1.2rem;
-    font-weight: 300;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+}
+.info-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+}
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #c9b8ff;
+    font-weight: 500;
+}
+.stat-item i {
+    font-size: 1.4rem;
+    color: #8b6cf0;
 }
 
-/* ===== Адаптив ===== */
+/* ===== Футер ===== */
+.footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 1.5rem 0;
+    color: #5a6478;
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* ===== Адаптив общий ===== */
 @media (max-width: 640px) {
-    body { padding: 1.2rem 0.8rem; }
-    .profile h1 { font-size: 2rem; }
-    .bio { font-size: 0.95rem; padding: 0.2rem 1.2rem; }
+    body { padding: 1rem 0.6rem; }
+    .header { padding: 0.5rem 1rem; }
+    .logo { font-size: 1.3rem; }
+    .profile h1 { font-size: 2.1rem; }
+    .bio { font-size: 0.95rem; padding: 0.3rem 1.2rem; }
     .links { gap: 0.8rem; }
     .link-card { padding: 0.6rem 1.2rem; font-size: 0.9rem; gap: 8px; }
-    .anime-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.2rem; }
-    .anime-card img { height: 200px; }
-    .anime-info h3 { font-size: 1rem; }
-    .modal-content { margin: 10% auto; padding: 16px; width: 95%; }
-    #modalTitle { font-size: 1.3rem; }
-    .close-btn { right: 12px; font-size: 2rem; }
+    .info-block { padding: 1.5rem 1rem; }
+    .info-stats { gap: 1.2rem; }
+    .stat-item { font-size: 0.9rem; }
 }
-
 @media (max-width: 420px) {
-    .anime-grid { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-    .anime-card img { height: 160px; }
-    .profile h1 { font-size: 1.6rem; }
-  }
+    .profile h1 { font-size: 1.8rem; }
+    .link-card { padding: 0.5rem 0.9rem; font-size: 0.8rem; }
+}
