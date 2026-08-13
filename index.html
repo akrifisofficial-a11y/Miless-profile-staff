@@ -3,36 +3,36 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Мой аниме-уголок — Главная</title>
+    <title>Мой аниме-уголок</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
     <div class="container">
-        <!-- Шапка с гамбургер-меню -->
-        <header class="header">
-            <div class="logo">Ani<span>List</span></div>
-            <nav class="nav">
-                <ul class="nav-list" id="navList">
-                    <li><a href="index.html" class="active">Главная</a></li>
-                    <li><a href="anime.html">Мои аниме</a></li>
-                    <li><a href="Shikimori.html">Мои Аниме</a></li>
-                    <li><a href="updates.html">Обновление</a></li>
-                    <li><a href="ideas.html">Идеи и предложения</a></li>
-                    <li><a href="under-construction.html">Баги(тех.работ)</a></li>
-                </ul>
-                <div class="hamburger" id="hamburger">
+        <!-- ===== МЕНЮ (копируйте на все страницы) ===== -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-brand"><a href="index.html">🌙 Miless</a></div>
+                <div class="nav-toggle" id="navToggle">
                     <span></span><span></span><span></span>
                 </div>
-            </nav>
-        </header>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li>
+                    <li><a href="shikimori.html"><i class="fas fa-anchor"></i> Shikimori</a></li>
+                    <li><a href="anime.html"><i class="fas fa-film"></i> Аниме</a></li>
+                    <li><a href="updates.html"><i class="fas fa-newspaper"></i> Обновления</a></li>
+                    <li><a href="update.html"><i class="fas fa-sync"></i> Обновить</a></li>
+                    <li><a href="#" id="loginBtn"><i class="fas fa-sign-in-alt"></i> <span id="loginText">Войти</span></a></li>
+                </ul>
+            </div>
+        </nav>
 
-        <!-- Основной контент -->
+        <!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
         <main>
             <section class="profile">
                 <img src="https://i.pravatar.cc/150?img=11" alt="Аватар" class="avatar" />
                 <h1>Аниме-фан</h1>
-                <p class="bio">✨ Добро пожаловать в мой аниме-уголок! Здесь вы найдёте мои любимые тайтлы и ссылки на мои профили.</p>
+                <p class="bio">✨ Мои любимые аниме – список автоматически загружается с Shikimori</p>
             </section>
 
             <section class="links">
@@ -47,9 +47,9 @@
                 </a>
             </section>
 
-            <section class="info-block">
-                <h2>О сайте</h2>
-                <p>Этот сайт создан для демонстрации моих любимых аниме. Используйте меню, чтобы перейти к списку или связаться со мной.</p>
+            <section class="anime-section">
+                <h2>❤️ Мои любимые аниме</h2>
+                <div class="anime-grid" id="animeGrid"></div>
             </section>
         </main>
     </div>
