@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // ================= НАСТРОЙКИ =================
-    const USER_NICK = 'Miless';   // <-- впишите свой ник
-    const STATUS = 'completed';                // 'watching', 'planned', 'rewatching', 'dropped'
-    const LIMIT = 9999;
-    // ============================================
+    // ================= НАСТРОЙКИ (если нужен API - раскомментируйте) =================
+    // const USER_NICK = 'Miless';   // для API
+    // const STATUS = 'completed';                // для API
+    // const LIMIT = 9999;                          // для API
+    // ===========================================================
 
     // ----- ГАМБУРГЕР -----
     const toggle = document.querySelector('.nav-toggle');
@@ -72,16 +72,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ----- ЗАГРУЗКА АНИМЕ С SHIKIMORI API -----
+    // ----- ЗАГРУЗКА АНИМЕ ИЗ JSON-ФАЙЛА -----
     const grid = document.getElementById('animeGrid');
-    if (!grid) return;
+    if (!grid) return; // если контейнера нет – выходим
 
     async function loadAnime() {
         try {
-            const url = `https://shikimori.one/api/users/${USER_NICK}/anime_rates?target_type=Anime&status=${STATUS}&limit=${LIMIT}`;
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('API не отвечает');
+            // Здесь указываем путь к вашему JSON-файлу (он должен лежать в той же папке)
+            const response = await fetch('anime_rates.json');
+            if (!response.ok) throw new Error('Файл anime.json не найден или недоступен');
             const data = await response.json();
+
+            // Если данные приходят в формате, как от API Shikimori:
+            // data = [ { anime: { id, name, russian, year, genres, image } }, ... ]
+            // Тогда маппинг ниже подойдёт.
+            // Если у вас другой формат – адаптируйте return.
             return data.map(item => ({
                 id: item.anime.id,
                 title: item.anime.name,
@@ -91,16 +96,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 poster: item.anime.image?.original || `https://shikimori.one/system/animes/original/${item.anime.id}.jpg`
             }));
         } catch (error) {
-            console.error('Ошибка загрузки:', error);
-            grid.innerHTML = '<p style="color:#ff6b6b;text-align:center;padding:2rem;">Не удалось загрузить список. Проверьте ник и статус.</p>';
+            console.error('Ошибка загрузки JSON:', error);
+            grid.innerHTML = '<p style="color:#ff6b6b;text-align:center;padding:2rem;">Не удалось загрузить данные. Проверьте файл anime.json.</p>';
             return [];
         }
     }
 
+    // ----- ОТРИСОВКА КАРТОЧЕК (общая для всех страниц) -----
     async function renderAnime() {
         const list = await loadAnime();
         if (list.length === 0) {
-            grid.innerHTML = '<p style="color:#a8b2d9;text-align:center;padding:2rem;">В выбранном статусе нет аниме.</p>';
+            grid.innerHTML = '<p style="color:#a8b2d9;text-align:center;padding:2rem;">Список аниме пуст.</p>';
             return;
         }
         grid.innerHTML = '';
