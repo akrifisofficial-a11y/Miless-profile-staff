@@ -1,104 +1,152 @@
-// ============================================
-//  ГАМБУРГЕР-МЕНЮ + ПОДСВЕТКА СТРАНИЦЫ + КНОПКА ВХОДА
-//  Работает с классами .nav-toggle и .nav-menu
-//  Подключается на всех страницах
-// ============================================
-
 document.addEventListener('DOMContentLoaded', function () {
-    // ----- Элементы -----
+    // ================= НАСТРОЙКИ =================
+    const USER_NICK = 'Miless';   // <-- впишите свой ник
+    const STATUS = 'completed';                // 'watching', 'planned', 'rewatching', 'dropped'
+    const LIMIT = 9999;
+    // ============================================
+
+    // ----- ГАМБУРГЕР -----
     const toggle = document.querySelector('.nav-toggle');
     const menu = document.querySelector('.nav-menu');
     const body = document.body;
-
-    // Если меню нет – выходим (чтобы не было ошибок на страницах без меню)
-    if (!toggle || !menu) return;
-
-    // ----- 1. Функция переключения меню -----
-    function toggleMenu(forceState) {
-        const isOpen = typeof forceState === 'boolean' ? forceState : !menu.classList.contains('active');
-        menu.classList.toggle('active', isOpen);
-        toggle.classList.toggle('active', isOpen);
-        body.style.overflow = isOpen ? 'hidden' : '';
-    }
-
-    // ----- 2. Клик по гамбургеру -----
-    toggle.addEventListener('click', function (e) {
-        e.stopPropagation();
-        toggleMenu();
-    });
-
-    // ----- 3. Закрытие при клике на ссылку -----
-    menu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', function () {
-            if (menu.classList.contains('active')) {
+    if (toggle && menu) {
+        function toggleMenu(force) {
+            const isOpen = (force !== undefined) ? force : !menu.classList.contains('active');
+            menu.classList.toggle('active', isOpen);
+            toggle.classList.toggle('active', isOpen);
+            body.style.overflow = isOpen ? 'hidden' : '';
+        }
+        toggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            toggleMenu();
+        });
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function () {
+                if (menu.classList.contains('active')) toggleMenu(false);
+            });
+        });
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.navbar') && menu.classList.contains('active')) {
                 toggleMenu(false);
             }
         });
-    });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && menu.classList.contains('active')) toggleMenu(false);
+        });
+        let resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (window.innerWidth > 768 && menu.classList.contains('active')) {
+                    toggleMenu(false);
+                }
+            }, 100);
+        });
+        // Подсветка активной страницы
+        const current = window.location.pathname.split('/').pop() || 'index.html';
+        menu.querySelectorAll('a').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === current) link.classList.add('active');
+            else link.classList.remove('active');
+        });
+    }
 
-    // ----- 4. Закрытие при клике вне меню -----
-    document.addEventListener('click', function (e) {
-        if (!e.target.closest('.navbar') && menu.classList.contains('active')) {
-            toggleMenu(false);
-        }
-    });
-
-    // ----- 5. Закрытие по Escape -----
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && menu.classList.contains('active')) {
-            toggleMenu(false);
-        }
-    });
-
-    // ----- 6. Закрытие при ресайзе (ширина > 768px) -----
-    let resizeTimer;
-    window.addEventListener('resize', function () {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            if (window.innerWidth > 768 && menu.classList.contains('active')) {
-                toggleMenu(false);
-            }
-        }, 100);
-    });
-
-    // ----- 7. Автоматическая подсветка активной страницы -----
-    const currentFile = window.location.pathname.split('/').pop() || 'index.html';
-    menu.querySelectorAll('a').forEach(link => {
-        const href = link.getAttribute('href');
-        // Убираем параметры и якоря для сравнения
-        const cleanHref = href ? href.split('?')[0].split('#')[0] : '';
-        if (cleanHref === currentFile) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-
-    // ----- 8. Кнопка "Войти" (демо-функция) -----
+    // ----- КНОПКА "ВОЙТИ" (демо) -----
     const loginBtn = document.getElementById('loginBtn');
     const loginText = document.getElementById('loginText');
     if (loginBtn && loginText) {
-        // Проверяем состояние входа (хранится в localStorage)
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        loginText.textContent = isLoggedIn ? 'Выйти' : 'Войти';
-
+        const logged = localStorage.getItem('isLoggedIn') === 'true';
+        loginText.textContent = logged ? 'Выйти' : 'Войти';
         loginBtn.addEventListener('click', function (e) {
             e.preventDefault();
             if (loginText.textContent === 'Войти') {
-                // Имитация входа
                 localStorage.setItem('isLoggedIn', 'true');
                 loginText.textContent = 'Выйти';
-                alert('Вы вошли (демо)');
+                alert('Демо-вход выполнен');
             } else {
-                // Выход
                 localStorage.removeItem('isLoggedIn');
                 loginText.textContent = 'Войти';
-                alert('Вы вышли (демо)');
+                alert('Демо-выход');
             }
-            // Закрываем меню, если оно открыто
-            if (menu.classList.contains('active')) {
-                toggleMenu(false);
-            }
+            if (menu && menu.classList.contains('active')) toggleMenu(false);
         });
     }
+
+    // ----- ЗАГРУЗКА АНИМЕ С SHIKIMORI API -----
+    const grid = document.getElementById('animeGrid');
+    if (!grid) return;
+
+    async function loadAnime() {
+        try {
+            const url = `https://shikimori.one/api/users/${USER_NICK}/anime_rates?target_type=Anime&status=${STATUS}&limit=${LIMIT}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('API не отвечает');
+            const data = await response.json();
+            return data.map(item => ({
+                id: item.anime.id,
+                title: item.anime.name,
+                russian: item.anime.russian,
+                year: item.anime.year,
+                genres: item.anime.genres.map(g => g.name).join(', '),
+                poster: item.anime.image?.original || `https://shikimori.one/system/animes/original/${item.anime.id}.jpg`
+            }));
+        } catch (error) {
+            console.error('Ошибка загрузки:', error);
+            grid.innerHTML = '<p style="color:#ff6b6b;text-align:center;padding:2rem;">Не удалось загрузить список. Проверьте ник и статус.</p>';
+            return [];
+        }
+    }
+
+    async function renderAnime() {
+        const list = await loadAnime();
+        if (list.length === 0) {
+            grid.innerHTML = '<p style="color:#a8b2d9;text-align:center;padding:2rem;">В выбранном статусе нет аниме.</p>';
+            return;
+        }
+        grid.innerHTML = '';
+        list.forEach((anime, index) => {
+            const url = `https://shikimori.one/animes/${anime.id}`;
+            const card = document.createElement('div');
+            card.className = 'anime-card';
+            card.style.animationDelay = `${index * 0.06}s`;
+
+            const img = document.createElement('img');
+            img.src = anime.poster;
+            img.alt = anime.title;
+            img.loading = 'lazy';
+            img.onerror = function () {
+                this.style.background = '#2a2a4a';
+                this.style.objectFit = 'contain';
+                this.style.padding = '1rem';
+                this.src = '';
+            };
+
+            const info = document.createElement('div');
+            info.className = 'anime-info';
+
+            const title = document.createElement('h3');
+            title.textContent = anime.russian || anime.title;
+
+            const year = document.createElement('div');
+            year.className = 'year';
+            year.textContent = anime.year || '—';
+
+            const genre = document.createElement('span');
+            genre.className = 'genre';
+            genre.textContent = anime.genres || 'Жанр не указан';
+
+            info.appendChild(title);
+            info.appendChild(year);
+            info.appendChild(genre);
+
+            card.appendChild(img);
+            card.appendChild(info);
+
+            card.addEventListener('click', () => window.open(url, '_blank'));
+
+            grid.appendChild(card);
+        });
+    }
+
+    renderAnime();
 });
