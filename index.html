@@ -1,49 +1,59 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои любимые аниме</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мой аниме-уголок — Главная</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
     <div class="container">
-        <header class="profile">
-            <img src="https://i.pravatar.cc/150?img=11" alt="Аватар" class="avatar">
-            <h1>Мои любимые аниме</h1>
-            <p class="bio">✨ Автоматически из моего списка Shikimori</p>
+        <!-- Шапка с гамбургер-меню -->
+        <header class="header">
+            <div class="logo">Ani<span>List</span></div>
+            <nav class="nav">
+                <ul class="nav-list" id="navList">
+                    <li><a href="index.html" class="active">Главная</a></li>
+                    <li><a href="anime.html">Мои аниме</a></li>
+                    <li><a href="Shikimori.html">Мои Аниме</a></li>
+                    <li><a href="updates.html">Обновление</a></li>
+                    <li><a href="ideas.html">Идеи и предложения</a></li>
+                    <li><a href="Shikimori.html">Баги(тех.работ)</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span></span><span></span><span></span>
+                </div>
+            </nav>
         </header>
 
-        <section class="links">
-            <a href="https://anixart-app.com/profile/4077379" target="_blank" class="link-card anixart">
-                <i class="fas fa-play"></i> Anixart
-            </a>
-            <a href="https://vk.ru/akrifisofficial" target="_blank" class="link-card vk">
-                <i class="fab fa-vk"></i> VK
-            </a>
-            <a href="https://discord.com/users/1438577441231863842" target="_blank" class="link-card discord">
-                <i class="fab fa-discord"></i> Discord
-            </a>
-        </section>
+        <!-- Основной контент -->
+        <main>
+            <section class="profile">
+                <img src="https://i.pravatar.cc/150?img=11" alt="Аватар" class="avatar" />
+                <h1>Аниме-фан</h1>
+                <p class="bio">✨ Добро пожаловать в мой аниме-уголок! Здесь вы найдёте мои любимые тайтлы и ссылки на мои профили.</p>
+            </section>
 
-        <section class="anime-section">
-            <h2>❤️ Мои любимые аниме</h2>
-            <div class="anime-grid" id="animeGrid"></div>
-        </section>
+            <section class="links">
+                <a href="https://anixart.ru" target="_blank" class="link-card anixart">
+                    <i class="fas fa-play"></i> Anixart
+                </a>
+                <a href="https://vk.com" target="_blank" class="link-card vk">
+                    <i class="fab fa-vk"></i> VK
+                </a>
+                <a href="https://t.me" target="_blank" class="link-card tg">
+                    <i class="fab fa-telegram-plane"></i> Telegram
+                </a>
+            </section>
+
+            <section class="info-block">
+                <h2>О сайте</h2>
+                <p>Этот сайт создан для демонстрации моих любимых аниме. Используйте меню, чтобы перейти к списку или связаться со мной.</p>
+            </section>
+        </main>
     </div>
 
-    <!-- Модальное окно для плеера -->
-    <div id="playerModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="closeModal">&times;</span>
-            <h3 id="modalTitle">Название аниме</h3>
-            <div id="playerContainer">
-                <p id="loadingMsg">Загрузка видео...</p>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
